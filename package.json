@@ -11,6 +11,7 @@
     "build": "bun run build:web",
     "start": "bun apps/api/src/index.ts",
     "db:push": "bun --cwd apps/api db:push",
+    "db:migrate": "bun --cwd apps/api db:migrate",
     "db:clean": "bun apps/api/scripts/reset-db.ts"
   },
   "devDependencies": {

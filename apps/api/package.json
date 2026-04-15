@@ -8,6 +8,7 @@
     "start": "bun --env-file=../../.env src/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:migrate": "bun src/db/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
