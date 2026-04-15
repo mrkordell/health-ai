@@ -1,0 +1,98 @@
+import type { ToolCall } from '../lib/ai-client';
+import type { ToolName } from '../lib/tool-definitions';
+import type { ToolRegistry, ToolExecutionResult, ToolHandler } from './types';
+import {
+  lookupNutritionHandler,
+  logMealHandler,
+  logWeightHandler,
+  getTodaySummaryHandler,
+  getWeightHistoryHandler,
+  updateGoalsHandler,
+  suggestMealHandler,
+  getWeeklyProgressHandler,
+  saveOnboardingDataHandler,
+  completeOnboardingHandler,
+} from './handlers';
+
+const toolRegistry: ToolRegistry = {
+  lookup_nutrition: lookupNutritionHandler,
+  log_meal: logMealHandler,
+  log_weight: logWeightHandler,
+  get_today_summary: getTodaySummaryHandler,
+  get_weight_history: getWeightHistoryHandler,
+  update_goals: updateGoalsHandler,
+  suggest_meal: suggestMealHandler,
+  get_weekly_progress: getWeeklyProgressHandler,
+  save_onboarding_data: saveOnboardingDataHandler,
+  complete_onboarding: completeOnboardingHandler,
+};
+
+export function registerTool(name: ToolName, handler: ToolHandler): void {
+  toolRegistry[name] = handler;
+}
+
+export function getToolHandler(name: ToolName): ToolHandler | undefined {
+  return toolRegistry[name];
+}
+
+export async function executeToolCall(
+  toolCall: ToolCall,
+  userId: string
+): Promise<ToolExecutionResult> {
+  const toolName = toolCall.name as ToolName;
+  const handler = toolRegistry[toolName];
+
+  if (!handler) {
+    console.error(`[executeToolCall] Unknown tool: ${toolCall.name}`);
+    return {
+      success: false,
+      result: null,
+      error: `Unknown tool: ${toolCall.name}`,
+    };
+  }
+
+  try {
+    console.log(`[executeToolCall] Executing ${toolCall.name} for user ${userId}`);
+    const result = await handler(toolCall.arguments, userId);
+    console.log(`[executeToolCall] ${toolCall.name} completed successfully`);
+    return {
+      success: true,
+      result,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`[executeToolCall] ${toolCall.name} failed:`, errorMessage);
+    return {
+      success: false,
+      result: null,
+      error: errorMessage,
+    };
+  }
+}
+
+// Re-export types
+export type {
+  ToolHandler,
+  ToolRegistry,
+  ToolExecutionResult,
+  LookupNutritionArgs,
+  LookupNutritionResult,
+  LogMealArgs,
+  LogMealResult,
+  LogWeightArgs,
+  LogWeightResult,
+  GetTodaySummaryArgs,
+  GetTodaySummaryResult,
+  GetWeightHistoryArgs,
+  GetWeightHistoryResult,
+  UpdateGoalsArgs,
+  UpdateGoalsResult,
+  SuggestMealArgs,
+  SuggestMealResult,
+  GetWeeklyProgressArgs,
+  GetWeeklyProgressResult,
+  SaveOnboardingDataArgs,
+  SaveOnboardingDataResult,
+  CompleteOnboardingArgs,
+  CompleteOnboardingResult,
+} from './types';

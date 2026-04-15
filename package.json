@@ -1,0 +1,16 @@
+{
+  "name": "health-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "bun scripts/dev.ts",
+    "dev:app": "concurrently \"bun --cwd apps/web dev\" \"bun --cwd apps/api dev\" --names web,api -c cyan,yellow",
+    "build:web": "bun --cwd apps/web build",
+    "build:api": "bun --cwd apps/api build",
+    "db:clean": "bun apps/api/scripts/reset-db.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
