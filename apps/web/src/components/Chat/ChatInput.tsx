@@ -4,21 +4,34 @@ interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  /** Quick-action chips shown above the composer (e.g. "Log a meal"). */
+  suggestions?: ReadonlyArray<string>;
+  onSuggestionClick?: (suggestion: string) => void;
 }
 
-export function ChatInput({ onSend, disabled, placeholder = 'Message your coach...' }: ChatInputProps) {
+const DEFAULT_SUGGESTIONS = [
+  'Log a meal',
+  'Log my weight',
+  'How am I doing this week?',
+] as const;
+
+export function ChatInput({
+  onSend,
+  disabled,
+  placeholder = 'Tell Vita about your day…',
+  suggestions = DEFAULT_SUGGESTIONS,
+  onSuggestionClick,
+}: ChatInputProps) {
   const [value, setValue] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = useCallback(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    textarea.style.height = 'auto';
-    const lineHeight = 24;
-    const maxLines = 3;
-    const maxHeight = lineHeight * maxLines;
-    textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.style.height = 'auto';
+    const max = 24 * 5; // up to 5 lines
+    ta.style.height = `${Math.min(ta.scrollHeight, max)}px`;
   }, []);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -29,13 +42,10 @@ export function ChatInput({ onSend, disabled, placeholder = 'Message your coach.
   const handleSend = useCallback(() => {
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
-
     onSend(trimmed);
     setValue('');
-
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    setShowSuggestions(false);
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
   }, [value, disabled, onSend]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -45,37 +55,89 @@ export function ChatInput({ onSend, disabled, placeholder = 'Message your coach.
     }
   };
 
+  const handleSuggestion = (s: string) => {
+    if (disabled) return;
+    setShowSuggestions(false);
+    if (onSuggestionClick) {
+      onSuggestionClick(s);
+    } else {
+      onSend(s);
+    }
+  };
+
   const canSend = value.trim().length > 0 && !disabled;
 
   return (
-    <div className="flex-shrink-0 border-t border-neutral-200 bg-white px-4 py-3 safe-area-bottom">
-      <div className="flex items-end gap-2">
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          disabled={disabled}
-          rows={1}
-          className="flex-1 resize-none rounded-xl border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm leading-6 placeholder:text-neutral-400 focus:border-brand-500 focus:bg-white focus:outline-none disabled:opacity-50"
-        />
-        <button
-          type="button"
-          onClick={handleSend}
-          disabled={!canSend}
-          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white transition-colors hover:bg-brand-700 disabled:bg-neutral-300 disabled:cursor-not-allowed"
-          aria-label="Send message"
+    <div
+      className="safe-area-bottom flex-shrink-0 border-t"
+      style={{
+        borderColor: 'var(--color-line)',
+        background: 'rgba(251,247,242,0.92)',
+        backdropFilter: 'saturate(140%) blur(14px)',
+      }}
+    >
+      <div className="mx-auto max-w-2xl px-4 py-3 sm:px-6">
+        {showSuggestions && suggestions.length > 0 && value.length === 0 && (
+          <div className="scrollbar-hide mb-3 -mx-1 flex gap-2 overflow-x-auto px-1">
+            {suggestions.map((s) => (
+              <button
+                key={s}
+                type="button"
+                disabled={disabled}
+                onClick={() => handleSuggestion(s)}
+                className="flex-shrink-0 rounded-full border bg-white px-3.5 py-1.5 text-[13px] font-medium text-plum-800 transition-all hover:bg-apricot-50 hover:text-apricot-700 disabled:opacity-50"
+                style={{
+                  borderColor: 'var(--color-line-strong)',
+                  transitionDuration: 'var(--duration-soft)',
+                  transitionTimingFunction: 'var(--ease-soft)',
+                }}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="flex items-end gap-2 rounded-[20px] border bg-white px-3 py-2 transition-shadow focus-within:shadow-[0_0_0_4px_rgba(138,95,163,0.18)]"
+          style={{ borderColor: 'var(--color-line-strong)' }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="h-5 w-5"
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setShowSuggestions(false)}
+            placeholder={placeholder}
+            disabled={disabled}
+            rows={1}
+            className="flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] leading-6 text-plum-950 outline-none placeholder:text-[color:var(--color-muted)] disabled:opacity-50"
+            aria-label="Message Vita"
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={!canSend}
+            aria-label="Send message"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-all"
+            style={{
+              background: canSend ? 'var(--color-apricot-500)' : 'var(--color-plum-100)',
+              color: canSend ? 'var(--color-plum-950)' : 'var(--color-muted)',
+              transitionDuration: 'var(--duration-soft)',
+              transitionTimingFunction: 'var(--ease-soft)',
+            }}
           >
-            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-          </svg>
-        </button>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

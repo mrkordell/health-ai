@@ -19,9 +19,7 @@ export interface WeightData {
     endWeightLbs: number | null;
     changeLbs: number | null;
   };
-  currentWeight: {
-    weightLbs: number;
-  } | null;
+  currentWeight: { weightLbs: number } | null;
   targetWeightLbs: number | null;
 }
 
@@ -50,7 +48,6 @@ export function WeightScreen() {
       try {
         const token = await getToken();
         if (!token) throw new Error('Not authenticated');
-
         const days = TIME_RANGE_DAYS[timeRange];
         const data = await apiRequest<WeightData>(`/api/weight?days=${days}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -62,19 +59,44 @@ export function WeightScreen() {
         setLoading(false);
       }
     }
-
     fetchWeight();
   }, [timeRange, getToken]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="scrollbar-hide flex-1 overflow-y-auto pb-6">
+        {/* Page eyebrow + title */}
+        <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-6">
+          <p className="eyebrow">02 · Body</p>
+          <h1
+            className="mt-2 font-serif text-plum-900"
+            style={{
+              fontSize: 'clamp(28px, 5vw, 36px)',
+              fontWeight: 380,
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+              fontVariationSettings: '"opsz" 144, "SOFT" 50',
+            }}
+          >
+            How the body's been showing up.
+          </h1>
+        </div>
+
         {loading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center justify-center py-16">
+            <span
+              className="block h-2.5 w-2.5 rounded-full animate-breathe"
+              style={{ background: 'var(--color-apricot-500)' }}
+              aria-label="Loading"
+            />
           </div>
         ) : error ? (
-          <div className="p-4 text-center text-red-500">{error}</div>
+          <div
+            className="mx-auto mt-6 max-w-md rounded-2xl border bg-white p-5 text-center text-[14px] text-rose-600"
+            style={{ borderColor: 'var(--color-line)' }}
+          >
+            {error}
+          </div>
         ) : weightData ? (
           <>
             <CurrentWeightCard data={weightData} />

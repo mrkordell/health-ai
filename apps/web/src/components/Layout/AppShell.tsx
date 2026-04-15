@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { UserButton } from '@clerk/clerk-react';
 import { BottomNav } from './BottomNav';
+import { Wordmark } from '../Brand/Wordmark';
 
 interface AppShellProps {
   children: ReactNode;
@@ -9,28 +10,39 @@ interface AppShellProps {
 
 export function AppShell({ children, header }: AppShellProps) {
   return (
-    <div className="flex flex-col h-dvh bg-neutral-50">
-      {/* Header */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200 safe-area-top">
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-semibold text-brand-600">Vita</span>
+    <div
+      className="flex h-dvh flex-col"
+      style={{ background: 'var(--color-paper)' }}
+    >
+      {/* Top bar — quiet, hairline, paper background with subtle blur */}
+      <header
+        className="safe-area-top flex-shrink-0 border-b border-[color:var(--color-line)]"
+        style={{ background: 'rgba(251,247,242,0.86)', backdropFilter: 'saturate(140%) blur(14px)' }}
+      >
+        <div className="flex items-center justify-between px-5 py-3.5">
+          <Wordmark size="sm" />
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: 'h-8 w-8 ring-1 ring-[color:var(--color-line-strong)]',
+              },
+            }}
+          />
         </div>
-        <UserButton afterSignOutUrl="/" />
       </header>
 
-      {/* Optional sub-header (for daily summary, etc.) */}
+      {/* Optional sub-header */}
       {header && (
-        <div className="flex-shrink-0 border-b border-neutral-200">
+        <div className="flex-shrink-0 border-b border-[color:var(--color-line)]">
           {header}
         </div>
       )}
 
-      {/* Main content area - flex-1 to fill remaining space */}
-      <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      {/* Main content */}
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {children}
       </main>
 
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );

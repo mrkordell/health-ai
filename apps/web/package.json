@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@fontsource/inter": "^5.2.8",
+    "@fontsource-variable/fraunces": "^5.2.8",
     "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

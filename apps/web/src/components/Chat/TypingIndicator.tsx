@@ -1,14 +1,35 @@
+import { VitaGlyph } from '../Brand/Wordmark';
+
+/**
+ * "Vita is thinking" — a single breathing apricot dot, paired with the
+ * mono eyebrow. No bouncing dots, no spinners.
+ */
 export function TypingIndicator() {
   return (
-    <div className="flex justify-start gap-2">
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center">
-        <span className="text-brand-600 text-sm font-medium">V</span>
-      </div>
-      <div className="px-4 py-3 rounded-2xl rounded-bl-md bg-neutral-200">
-        <div className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-neutral-500 animate-bounce [animation-delay:-0.3s]" />
-          <span className="w-2 h-2 rounded-full bg-neutral-500 animate-bounce [animation-delay:-0.15s]" />
-          <span className="w-2 h-2 rounded-full bg-neutral-500 animate-bounce" />
+    <div className="flex items-start gap-3" aria-live="polite" aria-label="Vita is thinking">
+      <VitaGlyph size={36} />
+      <div className="flex-1">
+        <div
+          className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em]"
+          style={{ color: 'var(--color-apricot-700)', fontFamily: 'var(--font-mono)' }}
+        >
+          Vita
+        </div>
+        <div
+          className="inline-flex items-center gap-3 rounded-[20px] rounded-bl-[8px] border bg-white px-5 py-3.5"
+          style={{ borderColor: 'var(--color-line)', boxShadow: 'var(--shadow-quiet)' }}
+        >
+          <span
+            className="block h-2 w-2 rounded-full animate-breathe"
+            style={{ background: 'var(--color-apricot-500)' }}
+            aria-hidden
+          />
+          <span
+            className="font-serif italic text-[14px] text-[color:var(--color-muted)]"
+            style={{ fontVariationSettings: '"opsz" 24, "SOFT" 60' }}
+          >
+            thinking…
+          </span>
         </div>
       </div>
     </div>

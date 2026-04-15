@@ -45,7 +45,6 @@ export function MealsScreen() {
       try {
         const token = await getToken();
         if (!token) throw new Error('Not authenticated');
-
         const dateStr = selectedDate.toISOString().split('T')[0];
         const data = await apiRequest<DayData>(`/api/meals?date=${dateStr}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,21 +56,25 @@ export function MealsScreen() {
         setLoading(false);
       }
     }
-
     fetchMeals();
   }, [selectedDate, getToken]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-
-      <div className="flex-1 overflow-y-auto">
+      <div className="scrollbar-hide flex-1 overflow-y-auto pb-6">
         {loading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center justify-center py-16">
+            <span
+              className="block h-2.5 w-2.5 rounded-full animate-breathe"
+              style={{ background: 'var(--color-apricot-500)' }}
+              aria-label="Loading"
+            />
           </div>
         ) : error ? (
-          <div className="p-4 text-center text-red-500">{error}</div>
+          <div className="mx-auto mt-8 max-w-md rounded-2xl border bg-white p-5 text-center text-[14px] text-rose-600" style={{ borderColor: 'var(--color-line)' }}>
+            {error}
+          </div>
         ) : dayData ? (
           <>
             <DailySummary data={dayData} />

@@ -5,49 +5,52 @@ interface WeightEntryListProps {
 }
 
 export function WeightEntryList({ entries }: WeightEntryListProps) {
-  if (entries.length === 0) {
-    return null;
-  }
+  if (entries.length === 0) return null;
 
-  // Sort entries by date descending (most recent first)
-  const sortedEntries = [...entries].sort(
+  const sorted = [...entries].sort(
     (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime()
   );
 
-  // Calculate changes from previous entry
-  const entriesWithChange = sortedEntries.map((entry, index) => {
-    const prevEntry = sortedEntries[index + 1];
-    let change: number | null = null;
-    if (prevEntry) {
-      change = entry.weightLbs - prevEntry.weightLbs;
-    }
+  const withChange = sorted.map((entry, i) => {
+    const prev = sorted[i + 1];
+    const change: number | null = prev ? entry.weightLbs - prev.weightLbs : null;
     return { ...entry, change };
   });
 
   return (
-    <div className="px-4 pb-4">
-      <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500 mt-4 mb-2">
+    <div className="mx-auto mt-8 max-w-2xl px-4 pb-6 sm:px-6">
+      <h2
+        className="mb-3 font-serif text-plum-900"
+        style={{
+          fontSize: 22,
+          fontWeight: 400,
+          letterSpacing: '-0.01em',
+          fontVariationSettings: '"opsz" 144, "SOFT" 40',
+        }}
+      >
         History
-      </h3>
-      <div className="space-y-2">
-        {entriesWithChange.map((entry) => (
-          <WeightEntryRow
-            key={entry.id}
-            entry={entry}
-            change={entry.change}
-          />
+      </h2>
+      <div
+        className="overflow-hidden rounded-2xl border bg-white"
+        style={{ borderColor: 'var(--color-line)', boxShadow: 'var(--shadow-quiet)' }}
+      >
+        {withChange.map((entry, i) => (
+          <Row key={entry.id} entry={entry} change={entry.change} divider={i > 0} />
         ))}
       </div>
     </div>
   );
 }
 
-interface WeightEntryRowProps {
+function Row({
+  entry,
+  change,
+  divider,
+}: {
   entry: WeightEntry;
   change: number | null;
-}
-
-function WeightEntryRow({ entry, change }: WeightEntryRowProps) {
+  divider: boolean;
+}) {
   const date = new Date(entry.loggedAt);
   const dateStr = date.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -60,32 +63,44 @@ function WeightEntryRow({ entry, change }: WeightEntryRowProps) {
   });
 
   return (
-    <div className="bg-white rounded-xl p-3.5 flex items-center justify-between">
-      <div>
-        <p className="text-[15px] font-medium text-neutral-900">{dateStr}</p>
-        <p className="text-[13px] text-neutral-500">{timeStr}</p>
+    <div
+      className="flex items-center justify-between gap-3 px-4 py-3.5 sm:px-5"
+      style={divider ? { borderTop: '1px solid var(--color-line)' } : undefined}
+    >
+      <div className="min-w-0">
+        <p className="text-[14px] font-medium text-plum-900">{dateStr}</p>
+        <p
+          className="text-[11px] uppercase tracking-[0.14em] text-[color:var(--color-muted)]"
+          style={{ fontFamily: 'var(--font-mono)' }}
+        >
+          {timeStr}
+        </p>
       </div>
-      <div className="text-right flex items-center gap-2">
-        <div>
-          <span className="text-[17px] font-semibold text-neutral-800">
-            {entry.weightLbs.toFixed(1)}
-          </span>
-          <span className="text-[13px] text-neutral-400 ml-1">lbs</span>
-        </div>
-        {change !== null && (
+      <div className="flex items-baseline gap-3">
+        {change !== null && Math.abs(change) >= 0.05 && (
           <span
-            className={`text-[13px] font-medium px-1.5 py-0.5 rounded ${
-              change < 0
-                ? 'text-brand-600 bg-brand-50'
-                : change > 0
-                  ? 'text-rose-500 bg-rose-50'
-                  : 'text-neutral-400 bg-neutral-100'
-            }`}
+            className="text-[12px] font-medium"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              color: change < 0 ? 'var(--color-sage-700)' : 'var(--color-apricot-700)',
+            }}
           >
             {change > 0 ? '+' : ''}
             {change.toFixed(1)}
           </span>
         )}
+        <span
+          className="font-serif text-plum-900"
+          style={{
+            fontSize: 20,
+            fontWeight: 400,
+            letterSpacing: '-0.01em',
+            fontVariationSettings: '"opsz" 24, "SOFT" 30',
+          }}
+        >
+          {entry.weightLbs.toFixed(1)}
+          <span className="ml-1 text-[12px] text-[color:var(--color-muted)]">lbs</span>
+        </span>
       </div>
     </div>
   );
