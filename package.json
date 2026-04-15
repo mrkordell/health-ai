@@ -8,6 +8,9 @@
     "dev:app": "concurrently \"bun --cwd apps/web dev\" \"bun --cwd apps/api dev\" --names web,api -c cyan,yellow",
     "build:web": "bun --cwd apps/web build",
     "build:api": "bun --cwd apps/api build",
+    "build": "bun run build:web",
+    "start": "bun apps/api/src/index.ts",
+    "db:push": "bun --cwd apps/api db:push",
     "db:clean": "bun apps/api/scripts/reset-db.ts"
   },
   "devDependencies": {

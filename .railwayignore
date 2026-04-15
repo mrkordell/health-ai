@@ -1,0 +1,7 @@
+docker-compose.yml
+scripts/dev.ts
+PLAN.md
+TICKETS.md
+.env
+.env.*
+apps/api/public
