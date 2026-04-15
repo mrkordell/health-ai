@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vita — Brand Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens ---------- */
+  :root{
+    --plum-950:#1A0F1E;
+    --plum-900:#2A1A33;
+    --plum-800:#3D2649;
+    --plum-700:#523463;
+    --plum-600:#6B447F;
+    --plum-500:#8A5FA3;
+    --plum-300:#C8A8DA;
+    --plum-100:#EFE3F4;
+    --plum-50:#F8F2FA;
+
+    --apricot-700:#C2461E;
+    --apricot-600:#E25A2A;
+    --apricot-500:#F47A4A;
+    --apricot-400:#F89A75;
+    --apricot-200:#FBD4BE;
+    --apricot-100:#FDE9DD;
+
+    --sage-600:#5B7A6A;
+    --sage-500:#7B9A8A;
+    --sage-200:#C7D6CD;
+
+    --honey-500:#E8B14B;
+    --rose-500:#D85A6C;
+    --sky-500:#5A8FB8;
+
+    --ink:#1A0F1E;
+    --paper:#FBF7F2;
+    --paper-2:#F4ECDF;
+    --line:rgba(26,15,30,.10);
+    --line-strong:rgba(26,15,30,.20);
+    --muted:rgba(26,15,30,.62);
+
+    --r-1:6px; --r-2:10px; --r-3:14px; --r-4:20px; --r-5:28px; --r-pill:999px;
+    --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+
+    --sans:'Inter', system-ui, -apple-system, sans-serif;
+    --serif:'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--paper);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:var(--apricot-200);color:var(--plum-900)}
+
+  a{color:var(--plum-700);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+  a:hover{color:var(--apricot-600);border-color:var(--apricot-500)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* ---------- Top nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,247,242,.82);
+    backdrop-filter:saturate(140%) blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;max-width:1180px;margin:0 auto}
+  .nav a{border:0;color:var(--muted);font-size:13px;letter-spacing:.02em;margin-left:22px}
+  .nav a:hover{color:var(--plum-900)}
+  .nav-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:500;font-size:20px;color:var(--ink);border:0}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:120px 0 96px;
+    overflow:hidden;
+    background:
+      radial-gradient(60% 80% at 85% 0%, rgba(244,122,74,.18), transparent 60%),
+      radial-gradient(60% 80% at 0% 100%, rgba(138,95,163,.18), transparent 60%),
+      var(--paper);
+  }
+  .hero .eyebrow{
+    font-family:var(--mono);
+    text-transform:uppercase;
+    letter-spacing:.18em;
+    font-size:11px;
+    color:var(--apricot-700);
+    margin-bottom:32px;
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:340;
+    font-variation-settings:"opsz" 144, "SOFT" 50;
+    font-size:clamp(56px,9vw,128px);
+    line-height:.95;
+    letter-spacing:-0.025em;
+    margin:0 0 28px;
+    color:var(--plum-900);
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-variation-settings:"opsz" 144, "SOFT" 100, "WONK" 1;
+    color:var(--apricot-600);
+    font-weight:300;
+  }
+  .hero p{
+    font-family:var(--serif);
+    font-weight:380;
+    font-size:clamp(18px,1.6vw,22px);
+    line-height:1.5;
+    color:var(--muted);
+    max-width:620px;
+    margin:0 0 48px;
+  }
+  .hero-meta{
+    display:flex;gap:48px;flex-wrap:wrap;
+    border-top:1px solid var(--line);
+    padding-top:28px;
+    font-size:13px;color:var(--muted);
+  }
+  .hero-meta div span{display:block;color:var(--ink);font-weight:500;margin-top:4px;font-family:var(--serif);font-size:18px;letter-spacing:-.01em}
+
+  /* Hero ornament */
+  .ornament{
+    position:absolute;right:-60px;top:140px;width:520px;height:520px;
+    pointer-events:none;opacity:.9;
+  }
+
+  /* ---------- Sections ---------- */
+  section{padding:96px 0;border-top:1px solid var(--line)}
+  .section-head{display:flex;align-items:baseline;gap:24px;margin-bottom:56px}
+  .section-num{
+    font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--apricot-600);
+    text-transform:uppercase;
+  }
+  .section-title{
+    font-family:var(--serif);font-weight:380;font-size:clamp(36px,4.5vw,56px);
+    letter-spacing:-.02em;line-height:1;margin:0;color:var(--plum-900);
+    font-variation-settings:"opsz" 144, "SOFT" 30;
+  }
+  .section-lede{
+    max-width:640px;margin-top:18px;font-family:var(--serif);
+    font-size:19px;line-height:1.55;color:var(--muted);font-weight:380;
+  }
+
+  .grid{display:grid;gap:24px}
+  .g-2{grid-template-columns:repeat(2,1fr)}
+  .g-3{grid-template-columns:repeat(3,1fr)}
+  .g-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:880px){.g-2,.g-3,.g-4{grid-template-columns:1fr}}
+
+  .card{
+    background:#fff;border:1px solid var(--line);
+    border-radius:var(--r-4);padding:28px;
+  }
+  .card h4{margin:0 0 8px;font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--muted);font-size:15px}
+
+  .pill{
+    display:inline-block;padding:4px 10px;border-radius:var(--r-pill);
+    background:var(--plum-100);color:var(--plum-800);
+    font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;
+  }
+  .pill.apricot{background:var(--apricot-100);color:var(--apricot-700)}
+
+  /* ---------- 1. Essence ---------- */
+  .quote{
+    font-family:var(--serif);font-weight:340;
+    font-variation-settings:"opsz" 144, "SOFT" 60;
+    font-size:clamp(28px,3.4vw,44px);
+    line-height:1.2;letter-spacing:-.02em;
+    color:var(--plum-900);max-width:920px;
+  }
+  .quote em{font-style:italic;color:var(--apricot-600)}
+
+  .traits{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:64px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  @media (max-width:880px){.traits{grid-template-columns:repeat(2,1fr)}}
+  .trait{padding:28px 24px;border-right:1px solid var(--line)}
+  .trait:last-child{border-right:0}
+  @media (max-width:880px){.trait{border-right:0;border-bottom:1px solid var(--line)}.trait:nth-child(2n){border-right:0}}
+  .trait-num{font-family:var(--mono);font-size:11px;color:var(--apricot-600);letter-spacing:.18em}
+  .trait h5{margin:18px 0 6px;font-family:var(--serif);font-weight:500;font-size:24px;letter-spacing:-.01em}
+  .trait p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+
+  /* Voice do/don't */
+  .voice{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:48px}
+  @media (max-width:880px){.voice{grid-template-columns:1fr}}
+  .voice-card{border-radius:var(--r-4);padding:28px;border:1px solid var(--line);background:#fff}
+  .voice-card.do{border-left:3px solid var(--sage-500)}
+  .voice-card.dont{border-left:3px solid var(--rose-500)}
+  .voice-card .label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;color:var(--muted)}
+  .voice-card.do .label{color:var(--sage-600)}
+  .voice-card.dont .label{color:var(--rose-500)}
+  .voice-card .scenario{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14px;margin-bottom:14px}
+  .voice-card .reply{font-family:var(--serif);font-size:19px;line-height:1.45;color:var(--plum-900);font-weight:380}
+
+  /* ---------- 2. Logo ---------- */
+  .logo-stage{
+    background:var(--paper-2);
+    border-radius:var(--r-5);
+    padding:80px;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);
+  }
+  .logo-stage.dark{background:var(--plum-950)}
+
+  .wordmark{display:inline-flex;align-items:flex-end;gap:.04em;font-family:var(--serif);font-weight:340;font-variation-settings:"opsz" 144, "SOFT" 80;font-size:140px;line-height:.85;letter-spacing:-.04em;color:var(--plum-900)}
+  .wordmark .dot{display:inline-block;width:.18em;height:.18em;border-radius:50%;background:var(--apricot-500);margin:0 0 .12em .04em;box-shadow:0 0 0 .04em var(--apricot-200)}
+  .wordmark.on-dark{color:var(--paper)}
+  .wordmark .ita{font-style:italic;font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1}
+
+  .logo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px}
+  @media (max-width:880px){.logo-grid{grid-template-columns:1fr}}
+  .logo-tile{background:#fff;border:1px solid var(--line);border-radius:var(--r-4);padding:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:200px}
+  .logo-tile .label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+  .glyph{
+    width:96px;height:96px;border-radius:24px;
+    background:linear-gradient(135deg,var(--plum-800),var(--plum-600));
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    box-shadow:0 10px 30px rgba(42,26,51,.25), inset 0 1px 0 rgba(255,255,255,.15);
+    position:relative;overflow:hidden;
+  }
+  .glyph::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 80% -10%, rgba(244,122,74,.4), transparent 55%)}
+  .glyph svg{position:relative;z-index:1}
+
+  .clearspace{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r-4);padding:32px;display:flex;align-items:center;justify-content:center;
+    background-image:
+      linear-gradient(var(--apricot-200) 1px,transparent 1px),
+      linear-gradient(90deg,var(--apricot-200) 1px,transparent 1px);
+    background-size:24px 24px;background-position:-1px -1px;
+  }
+  .clearspace .inner{background:#fff;padding:24px 32px;border-radius:8px;outline:1px dashed var(--apricot-500);outline-offset:0}
+
+  /* ---------- 3. Color ---------- */
+  .swatch-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  @media (max-width:880px){.swatch-row{grid-template-columns:repeat(2,1fr)}}
+  .swatch{
+    border-radius:var(--r-3);overflow:hidden;border:1px solid var(--line);background:#fff;
+  }
+  .swatch .chip{height:120px;display:flex;align-items:flex-end;padding:14px;font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+  .swatch .meta{padding:14px 14px 16px}
+  .swatch .name{font-family:var(--serif);font-size:18px;letter-spacing:-.01em;font-weight:500;margin-bottom:2px}
+  .swatch .hex{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase}
+  .swatch .aa{margin-top:8px;font-size:11px;color:var(--muted)}
+
+  .palette-block{margin-bottom:48px}
+  .palette-block h4{margin:0 0 16px;font-family:var(--serif);font-size:22px;font-weight:500;letter-spacing:-.01em;display:flex;align-items:center;gap:12px}
+
+  .semantic{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media (max-width:880px){.semantic{grid-template-columns:repeat(2,1fr)}}
+  .sem{padding:18px;border-radius:var(--r-3);border:1px solid var(--line)}
+  .sem .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle}
+  .sem .label{font-size:13px;font-weight:600}
+  .sem .hex{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* ---------- 4. Type ---------- */
+  .type-spec{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line)}
+  .type-spec .meta{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+  .t-display{font-family:var(--serif);font-weight:340;font-variation-settings:"opsz" 144,"SOFT" 60;font-size:80px;line-height:.95;letter-spacing:-.025em;color:var(--plum-900);margin:0}
+  .t-h1{font-family:var(--serif);font-weight:380;font-size:48px;line-height:1.05;letter-spacing:-.02em;margin:0;color:var(--plum-900)}
+  .t-h2{font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-.015em;margin:0;color:var(--plum-900)}
+  .t-h3{font-family:var(--sans);font-weight:600;font-size:22px;line-height:1.25;letter-spacing:-.01em;margin:0;color:var(--plum-900)}
+  .t-body{font-family:var(--sans);font-weight:400;font-size:16px;line-height:1.6;margin:0;max-width:560px}
+  .t-small{font-family:var(--sans);font-weight:500;font-size:13px;letter-spacing:.01em;color:var(--muted);margin:0}
+  .t-mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--apricot-700);margin:0}
+
+  .type-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+  @media (max-width:880px){.type-pair{grid-template-columns:1fr}}
+  .type-pair .card h2{font-family:var(--serif);font-weight:340;font-variation-settings:"opsz" 144,"SOFT" 70;font-size:64px;letter-spacing:-.025em;line-height:.95;margin:0 0 4px;color:var(--plum-900)}
+  .type-pair .card .specimen{font-family:var(--serif);font-size:80px;line-height:1;letter-spacing:-.04em;color:var(--plum-900);margin:18px 0 4px}
+  .type-pair .card .specimen.sans{font-family:var(--sans);font-weight:500}
+
+  /* ---------- 5. Icons ---------- */
+  .icons{display:grid;grid-template-columns:repeat(8,1fr);gap:14px}
+  @media (max-width:880px){.icons{grid-template-columns:repeat(4,1fr)}}
+  .icon-tile{aspect-ratio:1;border:1px solid var(--line);border-radius:var(--r-3);background:#fff;display:flex;align-items:center;justify-content:center;color:var(--plum-800);position:relative}
+  .icon-tile span{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+
+  /* ---------- 6. Components ---------- */
+  .components-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media (max-width:880px){.components-grid{grid-template-columns:1fr}}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;gap:8px;border-radius:var(--r-pill);font-family:var(--sans);font-weight:500;font-size:15px;padding:12px 22px;border:1px solid transparent;cursor:pointer;transition:all 180ms cubic-bezier(.2,.8,.2,1)}
+  .btn-primary{background:var(--plum-900);color:#fff}
+  .btn-primary:hover{background:var(--plum-800);transform:translateY(-1px)}
+  .btn-accent{background:var(--apricot-500);color:var(--plum-950)}
+  .btn-accent:hover{background:var(--apricot-400)}
+  .btn-ghost{background:transparent;color:var(--plum-900);border-color:var(--line-strong)}
+  .btn-ghost:hover{background:var(--plum-50)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+  /* Inputs */
+  .field{display:block;margin-bottom:16px}
+  .field label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:500}
+  .field input{width:100%;padding:14px 16px;border:1px solid var(--line-strong);border-radius:var(--r-2);font-family:var(--sans);font-size:15px;background:#fff;color:var(--ink);outline:none;transition:border 160ms,box-shadow 160ms}
+  .field input:focus{border-color:var(--plum-700);box-shadow:0 0 0 4px rgba(138,95,163,.18)}
+
+  /* Chat */
+  .chat{background:var(--paper-2);border-radius:var(--r-4);padding:24px;border:1px solid var(--line)}
+  .bubble{max-width:78%;padding:14px 18px;border-radius:18px;font-size:15px;line-height:1.5;margin-bottom:10px;font-family:var(--sans)}
+  .bubble.vita{background:#fff;color:var(--plum-900);border:1px solid var(--line);border-bottom-left-radius:6px}
+  .bubble.vita .name{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--apricot-600);text-transform:uppercase;margin-bottom:6px;display:block}
+  .bubble.user{background:var(--plum-900);color:#fff;margin-left:auto;border-bottom-right-radius:6px}
+  .bubble.vita em{font-family:var(--serif);font-style:italic;color:var(--apricot-700)}
+
+  /* Cards / data viz */
+  .stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-4);padding:24px}
+  .stat-card .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+  .stat-card h6{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+  .stat-card .delta{font-family:var(--mono);font-size:11px;color:var(--sage-600);background:rgba(123,154,138,.15);padding:3px 8px;border-radius:var(--r-pill)}
+  .stat-num{font-family:var(--serif);font-weight:380;font-size:48px;letter-spacing:-.02em;color:var(--plum-900);line-height:1}
+  .stat-unit{font-family:var(--serif);font-size:18px;color:var(--muted);margin-left:4px}
+
+  /* Ring */
+  .ring-wrap{display:flex;align-items:center;gap:24px}
+  .ring{width:120px;height:120px;flex:0 0 120px}
+  .legend{font-size:13px;color:var(--muted)}
+  .legend div{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .legend .swt{width:10px;height:10px;border-radius:3px}
+
+  /* ---------- 7. Motion ---------- */
+  .motion-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media (max-width:880px){.motion-grid{grid-template-columns:1fr}}
+  .motion .card h4{margin-bottom:6px}
+  .motion .duration{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--apricot-600);text-transform:uppercase;margin-bottom:14px}
+  .motion .curve{height:80px;background:var(--paper-2);border-radius:var(--r-2);position:relative;overflow:hidden;margin-bottom:14px}
+  .motion .curve svg{position:absolute;inset:0;width:100%;height:100%}
+
+  /* ---------- 8. Photography ---------- */
+  .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  @media (max-width:880px){.photo-grid{grid-template-columns:1fr}}
+  .photo-card{padding:32px;border-radius:var(--r-4);border:1px solid var(--line);min-height:220px;display:flex;flex-direction:column;justify-content:flex-end}
+  .photo-card.do{background:linear-gradient(135deg,#F4ECDF,#FBD4BE)}
+  .photo-card.dont{background:repeating-linear-gradient(45deg,#EFE3F4,#EFE3F4 12px,#F8F2FA 12px,#F8F2FA 24px);opacity:.85}
+  .photo-card h5{margin:0 0 6px;font-family:var(--serif);font-size:22px;font-weight:500}
+  .photo-card p{margin:0;font-size:14px;color:var(--muted)}
+
+  /* ---------- 9. Layout ---------- */
+  .scale-row{display:grid;grid-template-columns:80px 1fr 80px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .scale-row .name{color:var(--ink);font-weight:500;letter-spacing:.04em}
+  .scale-bar{height:14px;background:var(--apricot-500);border-radius:3px}
+  .scale-radius{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:24px}
+  .scale-radius div{aspect-ratio:1.4;background:var(--plum-100);border:1px solid var(--line);display:flex;align-items:flex-end;padding:10px;font-family:var(--mono);font-size:11px;color:var(--plum-800)}
+
+  /* ---------- Footer ---------- */
+  footer{padding:80px 0 60px;background:var(--plum-950);color:var(--plum-100);border-top:0}
+  footer .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end}
+  @media (max-width:880px){footer .wrap{grid-template-columns:1fr}}
+  footer .mark{font-family:var(--serif);font-size:96px;line-height:.85;letter-spacing:-.04em;color:var(--paper)}
+  footer .mark .dot{display:inline-block;width:.18em;height:.18em;border-radius:50%;background:var(--apricot-500);margin:0 0 .12em .04em}
+  footer p{color:rgba(239,227,244,.6);font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+  footer .v{font-family:var(--serif);font-size:20px;color:var(--plum-100);font-style:italic}
+
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top">
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#2A1A33"/>
+        <path d="M8 10 L16 22 L24 10" stroke="#FBF7F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="24" cy="10" r="2.4" fill="#F47A4A"/>
+      </svg>
+      Vita
+    </a>
+    <div>
+      <a href="#essence">Essence</a>
+      <a href="#logo">Logo</a>
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#icons">Icons</a>
+      <a href="#components">Components</a>
+      <a href="#motion">Motion</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<header class="hero" id="top">
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="eyebrow">Brand Guidelines  ·  v 1.0  ·  Spring 2026</div>
+    <h1>Health, the way<br>you'd talk to a <em>friend</em>.</h1>
+    <p>Vita is a conversational AI companion for the life you actually live. These are the principles, marks, and mannerisms that make her feel like Vita — and not like every other wellness app on the shelf.</p>
+    <div class="hero-meta">
+      <div>Authored by<span>The Vita Studio</span></div>
+      <div>Audience<span>Designers, engineers, partners</span></div>
+      <div>Status<span>Living document</span></div>
+    </div>
+  </div>
+  <svg class="ornament" viewBox="0 0 520 520" fill="none">
+    <defs>
+      <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#F47A4A" stop-opacity=".5"/>
+        <stop offset="100%" stop-color="#F47A4A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="260" cy="260" r="240" stroke="#3D2649" stroke-opacity=".18" stroke-width="1"/>
+    <circle cx="260" cy="260" r="180" stroke="#3D2649" stroke-opacity=".14" stroke-width="1"/>
+    <circle cx="260" cy="260" r="120" stroke="#3D2649" stroke-opacity=".10" stroke-width="1"/>
+    <circle cx="260" cy="260" r="260" fill="url(#g1)"/>
+    <circle cx="420" cy="120" r="14" fill="#F47A4A"/>
+    <circle cx="120" cy="380" r="6" fill="#8A5FA3"/>
+  </svg>
+</header>
+
+<!-- ============== 1. ESSENCE ============== -->
+<section id="essence">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">01 / Essence</div>
+    </div>
+    <h2 class="section-title">A nutritionist, a coach,<br>and a friend who actually listens.</h2>
+    <p class="section-lede">Vita is the warm, evidence-based health companion you can text at 11pm without judgment. She is the antithesis of the gamified calorie counter — present, patient, and quietly brilliant.</p>
+
+    <div style="margin-top:64px">
+      <div class="t-mono">Positioning</div>
+      <p class="quote" style="margin-top:14px">Vita is the conversational health companion that helps you build a life you feel good in — <em>without the homework, the guilt, or the kale-leaf logo.</em></p>
+    </div>
+
+    <div class="traits">
+      <div class="trait"><div class="trait-num">01</div><h5>Warm</h5><p>Human first. We greet, we acknowledge, we celebrate. Never robotic, never clinical.</p></div>
+      <div class="trait"><div class="trait-num">02</div><h5>Grounded</h5><p>Evidence over hype. We cite, we caveat, we admit what we don't know.</p></div>
+      <div class="trait"><div class="trait-num">03</div><h5>Quietly Witty</h5><p>A dry, kind humor. We can land a smile without ever being the joke.</p></div>
+      <div class="trait"><div class="trait-num">04</div><h5>On Your Side</h5><p>We coach with you, not at you. The user is the protagonist, always.</p></div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-weight:400;font-size:28px;margin:80px 0 8px;letter-spacing:-.01em">Voice in the wild</h3>
+    <p style="color:var(--muted);font-size:15px;max-width:520px;margin:0">User: <em>"I binged last night. I feel awful."</em></p>
+
+    <div class="voice">
+      <div class="voice-card do">
+        <div class="label">Do — sound like Vita</div>
+        <div class="reply">"Hey, thank you for telling me. One night doesn't undo your week — and the fact that you're checking in says a lot. Want to talk about what was going on, or just plan something gentle for today?"</div>
+      </div>
+      <div class="voice-card dont">
+        <div class="label">Don't — sound like a tracker</div>
+        <div class="reply">"Logged. You exceeded your daily calorie target by 1,840 kcal. Recommended action: 45 min cardio + caloric deficit of 500 kcal/day for 4 days to compensate."</div>
+      </div>
+      <div class="voice-card do">
+        <div class="label">Do — celebrate small</div>
+        <div class="reply">"Three glasses of water before noon — that's a real thing. Last week you were averaging one. I'm noticing."</div>
+      </div>
+      <div class="voice-card dont">
+        <div class="label">Don't — over-promise</div>
+        <div class="reply">"AMAZING JOB!! 🔥🔥 You're CRUSHING your hydration goals!! Keep this up and you'll lose 10 lbs by summer!! 💪"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 2. LOGO ============== -->
+<section id="logo">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">02 / Identity</div></div>
+    <h2 class="section-title">The wordmark.</h2>
+    <p class="section-lede">A soft, optical-size serif set with a single apricot dot — the punctum — representing the spark of intelligence and the moment of being heard. The italic 'i' carries a hint of personality, a slight lean forward, attentive.</p>
+
+    <div class="logo-stage" style="margin-top:48px">
+      <div class="wordmark">V<span class="ita">i</span>ta<span class="dot"></span></div>
+    </div>
+
+    <div class="logo-grid">
+      <div class="logo-tile">
+        <div class="wordmark" style="font-size:64px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+        <div class="label">Primary wordmark</div>
+      </div>
+      <div class="logo-tile" style="background:var(--plum-950)">
+        <div class="wordmark on-dark" style="font-size:64px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+        <div class="label" style="color:rgba(251,247,242,.5)">On dark</div>
+      </div>
+      <div class="logo-tile">
+        <div class="glyph">
+          <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+            <path d="M7 9 L16 23 L25 9" stroke="#FBF7F2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="25" cy="9" r="3" fill="#F47A4A"/>
+          </svg>
+        </div>
+        <div class="label">App glyph — the V</div>
+      </div>
+    </div>
+
+    <div class="grid g-2" style="margin-top:32px">
+      <div>
+        <h4 style="font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:-.01em;margin:0 0 12px">Clear space</h4>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 18px">Maintain clear space equal to the height of the lowercase 'i' on all sides. The mark needs room to breathe — it's the visual equivalent of a thoughtful pause.</p>
+        <div class="clearspace">
+          <div class="inner">
+            <div class="wordmark" style="font-size:48px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:-.01em;margin:0 0 12px">Minimum sizes</h4>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 18px">Wordmark: 64px digital / 18mm print. Glyph: 24px digital / 8mm print. Below this, optical adjustments are required so the dot doesn't blur into the 'a'.</p>
+        <div style="display:flex;align-items:flex-end;gap:32px;background:#fff;border:1px solid var(--line);border-radius:var(--r-4);padding:32px;justify-content:center">
+          <div class="wordmark" style="font-size:128px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+          <div class="wordmark" style="font-size:64px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+          <div class="wordmark" style="font-size:32px">V<span class="ita">i</span>ta<span class="dot"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 3. COLOR ============== -->
+<section id="color">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">03 / Color</div></div>
+    <h2 class="section-title">A palette that knows<br>health isn't only green.</h2>
+    <p class="section-lede">Deep aubergine carries the authority. Apricot brings the warmth and the wink. A muted sage nods to nature without ever being the headline. Honey, rose, and sky handle the supporting roles.</p>
+
+    <div style="margin-top:64px"></div>
+
+    <div class="palette-block">
+      <h4><span class="pill">Primary</span> Aubergine</h4>
+      <div class="swatch-row">
+        <div class="swatch"><div class="chip" style="background:#1A0F1E;color:#EFE3F4">#1A0F1E</div><div class="meta"><div class="name">Plum 950</div><div class="hex">Ink, max contrast</div><div class="aa">AAA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#2A1A33;color:#EFE3F4">#2A1A33</div><div class="meta"><div class="name">Plum 900</div><div class="hex">Primary surface (dark)</div><div class="aa">AAA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#523463;color:#fff">#523463</div><div class="meta"><div class="name">Plum 700</div><div class="hex">Buttons, links</div><div class="aa">AA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#8A5FA3;color:#fff">#8A5FA3</div><div class="meta"><div class="name">Plum 500</div><div class="hex">Decorative, focus rings</div><div class="aa">3.4 — large only</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#EFE3F4;color:#3D2649">#EFE3F4</div><div class="meta"><div class="name">Plum 100</div><div class="hex">Tinted backgrounds</div><div class="aa">Background only</div></div></div>
+      </div>
+    </div>
+
+    <div class="palette-block">
+      <h4><span class="pill apricot">Accent</span> Apricot</h4>
+      <div class="swatch-row">
+        <div class="swatch"><div class="chip" style="background:#C2461E;color:#FDE9DD">#C2461E</div><div class="meta"><div class="name">Apricot 700</div><div class="hex">Apricot text on paper</div><div class="aa">AA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#E25A2A;color:#fff">#E25A2A</div><div class="meta"><div class="name">Apricot 600</div><div class="hex">Hover, emphasis</div><div class="aa">AA large</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#F47A4A;color:#2A1A33">#F47A4A</div><div class="meta"><div class="name">Apricot 500</div><div class="hex">Signature accent</div><div class="aa">Pair w/ plum</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#FBD4BE;color:#C2461E">#FBD4BE</div><div class="meta"><div class="name">Apricot 200</div><div class="hex">Highlight wash</div><div class="aa">Background only</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#FDE9DD;color:#C2461E">#FDE9DD</div><div class="meta"><div class="name">Apricot 100</div><div class="hex">Soft pill backgrounds</div><div class="aa">Background only</div></div></div>
+      </div>
+    </div>
+
+    <div class="palette-block">
+      <h4><span class="pill" style="background:#E8EFEB;color:#5B7A6A">Supporting</span> Sage, Honey, Rose, Sky</h4>
+      <div class="swatch-row">
+        <div class="swatch"><div class="chip" style="background:#5B7A6A;color:#fff">#5B7A6A</div><div class="meta"><div class="name">Sage 600</div><div class="hex">Calm / nature notes</div><div class="aa">AA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#E8B14B;color:#2A1A33">#E8B14B</div><div class="meta"><div class="name">Honey 500</div><div class="hex">Streaks, milestones</div><div class="aa">Pair w/ plum</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#D85A6C;color:#fff">#D85A6C</div><div class="meta"><div class="name">Rose 500</div><div class="hex">Emotion, heart-rate</div><div class="aa">AA on paper</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#5A8FB8;color:#fff">#5A8FB8</div><div class="meta"><div class="name">Sky 500</div><div class="hex">Hydration, sleep</div><div class="aa">AA large</div></div></div>
+        <div class="swatch"><div class="chip" style="background:#FBF7F2;color:#2A1A33;border-top:1px solid #00000010">#FBF7F2</div><div class="meta"><div class="name">Paper</div><div class="hex">Default canvas</div><div class="aa">—</div></div></div>
+      </div>
+    </div>
+
+    <div class="palette-block">
+      <h4>Semantic</h4>
+      <div class="semantic">
+        <div class="sem"><span class="dot" style="background:#5B7A6A"></span><span class="label">Success — Sage 600</span><div class="hex">#5B7A6A</div></div>
+        <div class="sem"><span class="dot" style="background:#E8B14B"></span><span class="label">Warning — Honey 500</span><div class="hex">#E8B14B</div></div>
+        <div class="sem"><span class="dot" style="background:#D85A6C"></span><span class="label">Error — Rose 500</span><div class="hex">#D85A6C</div></div>
+        <div class="sem"><span class="dot" style="background:#5A8FB8"></span><span class="label">Info — Sky 500</span><div class="hex">#5A8FB8</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 4. TYPE ============== -->
+<section id="type">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">04 / Typography</div></div>
+    <h2 class="section-title">Two voices,<br>perfectly in tune.</h2>
+    <p class="section-lede">Fraunces — a contemporary, optical-size serif — speaks for Vita: warm, considered, with a hint of personality in its italics. Inter handles the system: clear, neutral, never in the way. JetBrains Mono provides the technical aside.</p>
+
+    <div class="type-pair" style="margin-top:48px">
+      <div class="card">
+        <div class="t-mono">Display & Editorial</div>
+        <h2 style="margin-top:14px">Fraunces</h2>
+        <div class="specimen">Aa Bb <em>Ii</em> Gg</div>
+        <p style="color:var(--muted);font-size:14px;margin:14px 0 0">Variable axes: opsz 9–144, weight 300–900, SOFT 0–100, WONK 0–1. Use SOFT 60–80 at display sizes for warmth; reduce to 30 at body sizes for clarity.</p>
+      </div>
+      <div class="card">
+        <div class="t-mono">Interface & Body</div>
+        <h2 style="margin-top:14px">Inter</h2>
+        <div class="specimen sans">Aa Bb Ii Gg</div>
+        <p style="color:var(--muted);font-size:14px;margin:14px 0 0">Used for all UI text, body copy under 18px, labels, and buttons. Weights: 300, 400, 500, 600, 700. Default 400/500.</p>
+      </div>
+    </div>
+
+    <div class="type-spec"><div class="meta">Display / 80<br>Fraunces 340</div><h1 class="t-display">Build a life you feel good in.</h1></div>
+    <div class="type-spec"><div class="meta">H1 / 48<br>Fraunces 380</div><h1 class="t-h1">Today, gently.</h1></div>
+    <div class="type-spec"><div class="meta">H2 / 32<br>Fraunces 400</div><h2 class="t-h2">Three things worth noticing this week</h2></div>
+    <div class="type-spec"><div class="meta">H3 / 22<br>Inter 600</div><h3 class="t-h3">Your weekly summary</h3></div>
+    <div class="type-spec"><div class="meta">Body / 16<br>Inter 400</div><p class="t-body">You logged meals on five of the last seven days and your average sleep was up by 22 minutes. Want me to suggest a small adjustment for next week, or leave it as it is?</p></div>
+    <div class="type-spec"><div class="meta">Small / 13<br>Inter 500</div><p class="t-small">Updated 2 minutes ago · Synced from Apple Health</p></div>
+    <div class="type-spec"><div class="meta">Mono / 12<br>JetBrains Mono</div><p class="t-mono">Section 04 / Typography</p></div>
+  </div>
+</section>
+
+<!-- ============== 5. ICONOGRAPHY ============== -->
+<section id="icons">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">05 / Iconography & Illustration</div></div>
+    <h2 class="section-title">Drawn with a single,<br>steady stroke.</h2>
+    <p class="section-lede">Icons are 1.5px stroke, rounded caps and joins, on a 24×24 grid. We avoid clipart metaphors (no carrots, no dumbbells, no fire emoji). Instead: gentle geometry, soft curves, and the occasional warm fill in apricot.</p>
+
+    <div class="icons" style="margin-top:48px">
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12c0-4 4-8 8-8s8 4 8 8-4 8-8 8c-2 0-3-1-4-1H5l1-3c-1-1-2-2-2-4z"/></svg><span>Chat</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg><span>Today</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 L9 12 L13 15 L20 6"/><circle cx="20" cy="6" r="1.6" fill="#F47A4A" stroke="none"/></svg><span>Trend</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-3 4-3 7 0 10 3-3 3-6 0-10z" fill="#FBD4BE" stroke="#C2461E"/><path d="M12 14v6"/></svg><span>Hydrate</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg><span>Goal</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 15.8 7 18.2l1-5.5-4-3.9 5.5-.8z"/></svg><span>Win</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12c2-4 5-6 7-6s5 2 7 6c-2 4-5 6-7 6s-5-2-7-6z"/><circle cx="12" cy="12" r="2.2"/></svg><span>Notice</span></div>
+      <div class="icon-tile"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg><span>Care</span></div>
+    </div>
+
+    <div class="grid g-2" style="margin-top:48px">
+      <div class="card">
+        <div class="t-mono">Illustration direction</div>
+        <h4 style="margin-top:12px">Soft geometry, hand-drawn calm</h4>
+        <p>Loose, single-line illustrations on tinted paper backgrounds. Imperfect circles, gentle curves, the occasional apricot fill. Think Saul Steinberg meets a Muji catalog. Never 3D-rendered avocados, never gradient meshes, never abstract blobs.</p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#F4ECDF,#FDE9DD)">
+        <svg viewBox="0 0 240 100" style="width:100%;height:auto">
+          <path d="M10 80 Q40 20 80 60 T160 50 T230 70" stroke="#2A1A33" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <circle cx="80" cy="60" r="4" fill="#F47A4A"/>
+          <circle cx="160" cy="50" r="4" fill="#F47A4A"/>
+          <circle cx="230" cy="70" r="4" fill="#F47A4A"/>
+          <path d="M10 90 H230" stroke="#2A1A33" stroke-opacity=".15" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 6. COMPONENTS ============== -->
+<section id="components">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">06 / Components</div></div>
+    <h2 class="section-title">A quiet system,<br>doing the work.</h2>
+    <p class="section-lede">Generous radii, restrained shadow, type-led hierarchy. Components shouldn't shout; the conversation should.</p>
+
+    <div class="components-grid" style="margin-top:48px">
+
+      <div class="card">
+        <div class="t-mono">Buttons</div>
+        <div class="btn-row" style="margin-top:18px">
+          <button class="btn btn-primary">Continue</button>
+          <button class="btn btn-accent">Log a meal</button>
+          <button class="btn btn-ghost">Maybe later</button>
+        </div>
+        <p style="color:var(--muted);font-size:13px;margin-top:18px">Pill radius signals warmth. Primary uses ink-plum for trust; accent apricot reserved for the single most important action on a screen.</p>
+      </div>
+
+      <div class="card">
+        <div class="t-mono">Input</div>
+        <div class="field" style="margin-top:14px">
+          <label>Tell Vita about today</label>
+          <input type="text" placeholder="Ate well, walked 4k, slept like a brick…" />
+        </div>
+        <div class="field">
+          <label>Goal weight</label>
+          <input type="text" value="68 kg" />
+        </div>
+      </div>
+
+      <!-- Chat -->
+      <div class="card" style="grid-column:span 2;padding:0;overflow:hidden">
+        <div style="padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3D2649,#8A5FA3);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M8 10 L16 22 L24 10" stroke="#FBF7F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="10" r="2.4" fill="#F47A4A"/></svg>
+          </div>
+          <div>
+            <div style="font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:-.01em">Vita</div>
+            <div style="font-size:12px;color:var(--muted)">Online · here when you need her</div>
+          </div>
+        </div>
+        <div class="chat" style="border-radius:0;border:0;background:var(--paper)">
+          <div class="bubble vita">
+            <span class="name">Vita</span>
+            Morning, Tony. You hit your sleep window two nights in a row — <em>genuinely impressive</em>. Want to try the same wind-down again tonight, or are we mixing it up?
+          </div>
+          <div class="bubble user">Same again. It actually worked.</div>
+          <div class="bubble vita">
+            <span class="name">Vita</span>
+            Locked in. I'll nudge you at 10:15. Anything you ate yesterday I should know about?
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat card -->
+      <div class="stat-card">
+        <div class="head">
+          <h6>Weight, 30 days</h6>
+          <span class="delta">−1.4 kg</span>
+        </div>
+        <div><span class="stat-num">71.2</span><span class="stat-unit">kg</span></div>
+        <svg viewBox="0 0 300 80" style="margin-top:18px;width:100%;height:auto">
+          <path d="M0 30 C 40 20, 60 50, 90 40 S 140 60, 170 35 S 220 50, 260 30 S 290 25, 300 28" stroke="#F47A4A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M0 30 C 40 20, 60 50, 90 40 S 140 60, 170 35 S 220 50, 260 30 S 290 25, 300 28 L 300 80 L 0 80 Z" fill="#F47A4A" fill-opacity=".08"/>
+          <circle cx="300" cy="28" r="4" fill="#F47A4A"/>
+        </svg>
+      </div>
+
+      <!-- Macro ring -->
+      <div class="stat-card">
+        <div class="head">
+          <h6>Today's balance</h6>
+          <span class="delta" style="background:rgba(232,177,75,.18);color:#A57414">on track</span>
+        </div>
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" stroke="#EFE3F4" stroke-width="14" fill="none"/>
+            <circle cx="60" cy="60" r="48" stroke="#F47A4A" stroke-width="14" fill="none" stroke-dasharray="120 301" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" stroke="#5B7A6A" stroke-width="14" fill="none" stroke-dasharray="80 301" stroke-dashoffset="-120" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" stroke="#E8B14B" stroke-width="14" fill="none" stroke-dasharray="50 301" stroke-dashoffset="-200" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="legend">
+            <div><span class="swt" style="background:#F47A4A"></span>Carbs · 40%</div>
+            <div><span class="swt" style="background:#5B7A6A"></span>Protein · 27%</div>
+            <div><span class="swt" style="background:#E8B14B"></span>Fat · 17%</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== 7. MOTION ============== -->
+<section id="motion">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">07 / Motion</div></div>
+    <h2 class="section-title">Movement that breathes,<br>not movement that performs.</h2>
+    <p class="section-lede">Vita moves like someone composed. Easings are gentle. Nothing bounces. Animation is reserved for moments of meaning — a message arriving, a goal being met, a chart resolving — never for decoration.</p>
+
+    <div class="motion motion-grid" style="margin-top:48px">
+      <div class="card">
+        <div class="t-mono">Standard</div>
+        <h4 style="margin-top:8px">Soft Out</h4>
+        <div class="duration">220ms · cubic-bezier(.2, .8, .2, 1)</div>
+        <div class="curve"><svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 60 C 20 60, 40 0, 100 0" stroke="#F47A4A" stroke-width="1.5" fill="none"/></svg></div>
+        <p style="font-size:14px;color:var(--muted);margin:0">For most UI: hovers, fades, panels. The default unless you have a reason otherwise.</p>
+      </div>
+      <div class="card">
+        <div class="t-mono">Considered</div>
+        <h4 style="margin-top:8px">Settled In</h4>
+        <div class="duration">320ms · cubic-bezier(.4, .0, .2, 1)</div>
+        <div class="curve"><svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 60 C 40 60, 60 0, 100 0" stroke="#8A5FA3" stroke-width="1.5" fill="none"/></svg></div>
+        <p style="font-size:14px;color:var(--muted);margin:0">For larger surfaces — modals, sheets, screen transitions. Never exceeds 320ms.</p>
+      </div>
+      <div class="card">
+        <div class="t-mono">Celebratory</div>
+        <h4 style="margin-top:8px">Warm Bloom</h4>
+        <div class="duration">480ms · cubic-bezier(.16, 1, .3, 1)</div>
+        <div class="curve"><svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 60 C 10 60, 20 -10, 100 0" stroke="#E8B14B" stroke-width="1.5" fill="none"/></svg></div>
+        <p style="font-size:14px;color:var(--muted);margin:0">Reserved for milestones — streaks, goals reached. Used sparingly. Never with sound.</p>
+      </div>
+    </div>
+
+    <div class="grid g-3" style="margin-top:32px">
+      <div class="card"><h4 style="font-size:18px">Animate to inform</h4><p>Movement should communicate state, hierarchy, or causality — never just signal effort.</p></div>
+      <div class="card"><h4 style="font-size:18px">Respect reduced motion</h4><p>All transitions honor <span style="font-family:var(--mono);font-size:12px">prefers-reduced-motion</span>. Replace movement with cross-fade.</p></div>
+      <div class="card"><h4 style="font-size:18px">Never block the user</h4><p>If an animation prevents interaction, it's too long. Ceiling: 480ms, full stop.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 8. PHOTOGRAPHY ============== -->
+<section id="photography">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">08 / Imagery</div></div>
+    <h2 class="section-title">Real light, real life,<br>real people.</h2>
+    <p class="section-lede">When we use photography, it's documentary, never staged. Soft window light, real kitchens, unmade beds, hands in mid-gesture. The aesthetic is closer to a Sunday newspaper supplement than a fitness brand.</p>
+
+    <div class="photo-grid" style="margin-top:48px">
+      <div class="photo-card do">
+        <div class="pill apricot" style="margin-bottom:auto;align-self:flex-start">Do</div>
+        <h5>Quiet, candid, off-center</h5>
+        <p>Hands cupping a mug. Morning light through a window. The blur of someone walking past. People as people, not as before-and-afters.</p>
+      </div>
+      <div class="photo-card dont">
+        <div class="pill" style="background:#F8F2FA;color:#523463;margin-bottom:auto;align-self:flex-start">Don't</div>
+        <h5>Stock-photo wellness</h5>
+        <p>No bowls of berries shot from above. No yoga at sunset. No abs. No women laughing at salads. No "transformation" composites.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 9. LAYOUT ============== -->
+<section id="layout">
+  <div class="wrap">
+    <div class="section-head"><div class="section-num">09 / Layout & Spacing</div></div>
+    <h2 class="section-title">Eight-point grid.<br>Generous radii.</h2>
+    <p class="section-lede">A 4-point base, 8-point rhythm. Radii skew larger than typical for warmth — Vita rounds her corners the way she rounds her words.</p>
+
+    <div class="grid g-2" style="margin-top:48px">
+      <div>
+        <div class="t-mono" style="margin-bottom:14px">Spacing scale</div>
+        <div class="scale-row"><div class="name">s-1</div><div><div class="scale-bar" style="width:4px"></div></div><div>4px</div></div>
+        <div class="scale-row"><div class="name">s-2</div><div><div class="scale-bar" style="width:8px"></div></div><div>8px</div></div>
+        <div class="scale-row"><div class="name">s-3</div><div><div class="scale-bar" style="width:12px"></div></div><div>12px</div></div>
+        <div class="scale-row"><div class="name">s-4</div><div><div class="scale-bar" style="width:16px"></div></div><div>16px</div></div>
+        <div class="scale-row"><div class="name">s-5</div><div><div class="scale-bar" style="width:24px"></div></div><div>24px</div></div>
+        <div class="scale-row"><div class="name">s-6</div><div><div class="scale-bar" style="width:32px"></div></div><div>32px</div></div>
+        <div class="scale-row"><div class="name">s-7</div><div><div class="scale-bar" style="width:48px"></div></div><div>48px</div></div>
+        <div class="scale-row"><div class="name">s-8</div><div><div class="scale-bar" style="width:64px"></div></div><div>64px</div></div>
+        <div class="scale-row"><div class="name">s-9</div><div><div class="scale-bar" style="width:96px"></div></div><div>96px</div></div>
+      </div>
+      <div>
+        <div class="t-mono" style="margin-bottom:14px">Radius scale</div>
+        <div class="scale-radius">
+          <div style="border-radius:6px">6 · r-1</div>
+          <div style="border-radius:10px">10 · r-2</div>
+          <div style="border-radius:14px">14 · r-3</div>
+          <div style="border-radius:20px">20 · r-4</div>
+          <div style="border-radius:28px">28 · r-5</div>
+          <div style="border-radius:999px;text-align:center;display:flex;align-items:center;justify-content:center;padding:0">pill</div>
+        </div>
+        <div class="t-mono" style="margin:32px 0 14px">Grid</div>
+        <p style="color:var(--muted);font-size:14px;max-width:420px">Mobile: 4-column, 16px gutters, 20px margins. Tablet: 8-col, 20/28. Desktop: 12-col, 24/32, 1180px max content width.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="wrap">
+    <div>
+      <p>Vita — Brand Guidelines</p>
+      <div class="mark">V<span style="font-style:italic;font-family:var(--serif)">i</span>ta<span class="dot"></span></div>
+    </div>
+    <div>
+      <p>Living document · v 1.0</p>
+      <div class="v">"Health, the way you'd talk to a friend."</div>
+      <p style="margin-top:24px">© 2026 Vita Studio · Authored with care</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
