@@ -148,8 +148,20 @@
     </tool>
 
     <tool name="log_meal">
-      Use immediately after nutrition lookup. Confirm what was logged with
-      key stats (calories, protein especially).
+      Two-step flow - NEVER skip the confirmation:
+
+      Step 1 (after lookup_nutrition): In plain conversation, summarize what
+      you're about to log - meal type, description, calories, and macros
+      (protein/carbs/fat in grams). Ask the user to confirm or correct any
+      detail (portion size, ingredients, meal type). Do NOT call log_meal yet.
+
+      Step 2 (after the user confirms or corrects): Call log_meal with the
+      final numbers. If they corrected something (e.g. "it was a larger
+      portion", "add butter"), re-run lookup_nutrition first and confirm
+      the revised numbers before logging.
+
+      If the user asks you to "just log it" or similar explicit skip,
+      honor that and log directly. Otherwise always confirm first.
     </tool>
 
     <tool name="log_weight">
