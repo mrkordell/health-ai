@@ -1,19 +1,6 @@
 {
   "$schema": "https://schema.railpack.com",
-  "steps": {
-    "install": {
-      "packages": {
-        "bun": "latest"
-      },
-      "commands": ["bun install --frozen-lockfile"]
-    },
-    "build": {
-      "inputs": [{ "step": "install" }],
-      "commands": ["bun run build:web"]
-    }
-  },
   "deploy": {
-    "inputs": [{ "step": "build" }],
     "startCommand": "bun run db:push && bun run start"
   }
 }
