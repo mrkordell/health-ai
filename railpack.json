@@ -1,8 +1,10 @@
 {
   "$schema": "https://schema.railpack.com",
-  "provider": "bun",
   "steps": {
     "install": {
+      "packages": {
+        "bun": "latest"
+      },
       "commands": ["bun install --frozen-lockfile"]
     },
     "build": {
