@@ -187,11 +187,13 @@ export const completeOnboardingHandler: ToolHandler<CompleteOnboardingArgs, Comp
       });
   }
 
+  const timelineNote = buildTimelineNote(onboarding ?? null, profile ?? null);
+
   return {
     success: true,
     message: args.skipReason
       ? `Onboarding skipped. I've set some default targets that you can adjust anytime.`
-      : `Onboarding complete! I've calculated your personalized nutrition targets based on your profile.`,
+      : `Onboarding complete! I've calculated your personalized nutrition targets based on your profile.${timelineNote ? ' ' + timelineNote : ''}`,
     recommendations,
     summary: {
       preferredName: onboarding?.preferredName ?? null,
@@ -202,3 +204,33 @@ export const completeOnboardingHandler: ToolHandler<CompleteOnboardingArgs, Comp
     },
   };
 };
+
+// Sanity-check weight-loss/gain pace against any user-supplied target date.
+// Returns a short note the coach can relay (e.g. "Your pace target is aggressive").
+function buildTimelineNote(
+  onboarding: OnboardingProfile | null,
+  profile: UserProfile | null
+): string {
+  if (!profile?.targetDate || !profile?.targetWeightLbs || !onboarding?.currentWeightLbs) {
+    return '';
+  }
+
+  const current = parseFloat(onboarding.currentWeightLbs);
+  const target = parseFloat(profile.targetWeightLbs);
+  const diffLbs = Math.abs(current - target);
+  if (diffLbs < 0.5) return '';
+
+  const targetMs = new Date(profile.targetDate + 'T00:00:00Z').getTime();
+  const weeks = (targetMs - Date.now()) / (1000 * 60 * 60 * 24 * 7);
+  if (weeks <= 0) return 'Heads up: your target date is in the past — we should pick a new one.';
+
+  const paceLbsPerWeek = diffLbs / weeks;
+  // Sustainable pace: ~0.5-2 lbs/week for loss, ~0.25-0.75 lbs/week for gain.
+  if (paceLbsPerWeek > 2) {
+    return `At ${paceLbsPerWeek.toFixed(1)} lbs/week that timeline is aggressive — a more sustainable pace is 1-2 lbs/week.`;
+  }
+  if (paceLbsPerWeek < 0.25) {
+    return `That's a relaxed pace — we have plenty of runway.`;
+  }
+  return '';
+}

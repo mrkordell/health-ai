@@ -132,6 +132,10 @@ export const updateGoals: ToolDefinition = {
         type: 'number',
         description: 'Target weight in pounds',
       },
+      targetDate: {
+        type: 'string',
+        description: 'Target date for reaching the goal, ISO format YYYY-MM-DD (optional)',
+      },
       goalType: {
         type: 'string',
         enum: ['lose_weight', 'maintain', 'gain_muscle', 'general_health'],
@@ -203,7 +207,7 @@ export const getWeeklyProgress: ToolDefinition = {
 export const saveOnboardingData: ToolDefinition = {
   name: 'save_onboarding_data',
   description:
-    'Save user profile information during onboarding. Call this IMMEDIATELY after the user provides any personal information. Saves incrementally - call multiple times as data is collected throughout the conversation.',
+    'Save or update user profile information (age, height, current weight, activity level, food preferences, allergies, timezone, etc.). Use during onboarding to capture data as it comes in, and also after onboarding whenever the user tells you updated personal info (e.g. "I weigh 265 now", "I moved to PST", "I just went vegetarian"). Saves only the fields provided.',
   parameters: {
     type: 'object',
     properties: {
@@ -245,6 +249,10 @@ export const saveOnboardingData: ToolDefinition = {
       targetWeightLbs: {
         type: 'number',
         description: 'Target weight in pounds',
+      },
+      targetDate: {
+        type: 'string',
+        description: 'Target date for reaching the goal weight, ISO format YYYY-MM-DD (optional)',
       },
 
       // Fitness
@@ -355,6 +363,7 @@ export const regularTools: ToolDefinition[] = [
   updateGoals,
   suggestMeal,
   getWeeklyProgress,
+  saveOnboardingData,
 ];
 
 // Onboarding tools

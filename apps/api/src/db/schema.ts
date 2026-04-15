@@ -10,6 +10,7 @@ import {
   uniqueIndex,
   pgEnum,
   boolean,
+  date,
 } from 'drizzle-orm/pg-core';
 
 // Enums
@@ -96,6 +97,7 @@ export const userProfiles = pgTable(
     goalType: goalTypeEnum('goal_type'),
     targetWeightKg: decimal('target_weight_kg', { precision: 5, scale: 2 }),
     targetWeightLbs: decimal('target_weight_lbs', { precision: 5, scale: 2 }),
+    targetDate: date('target_date'),
     dailyCalorieTarget: integer('daily_calorie_target'),
     dailyProteinTargetG: integer('daily_protein_target_g'),
     dailyCarbsTargetG: integer('daily_carbs_target_g'),

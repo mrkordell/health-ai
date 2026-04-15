@@ -84,6 +84,9 @@
       This is the heart of it:
       - What brings them here? What are they hoping to achieve?
       - If weight-related: what's their target weight?
+      - If they have a timeline in mind (e.g. "by summer", "in 3 months",
+        "by my wedding in June"), capture it as targetDate (YYYY-MM-DD).
+        Don't push for a date if they don't volunteer one.
 
       Listen for the underlying motivation, not just the number.
     </section>

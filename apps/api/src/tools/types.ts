@@ -115,6 +115,7 @@ export interface GetWeightHistoryResult {
 export interface UpdateGoalsArgs {
   dailyCalorieTarget?: number;
   targetWeightLbs?: number;
+  targetDate?: string; // ISO date (YYYY-MM-DD)
   goalType?: 'lose_weight' | 'maintain' | 'gain_muscle' | 'general_health';
   dailyProteinTargetG?: number;
   dailyCarbsTargetG?: number;
@@ -127,6 +128,7 @@ export interface UpdateGoalsResult {
   updatedGoals: {
     dailyCalorieTarget: number | null;
     targetWeightLbs: number | null;
+    targetDate: string | null;
     goalType: string | null;
     dailyProteinTargetG: number | null;
     dailyCarbsTargetG: number | null;
@@ -190,6 +192,7 @@ export interface SaveOnboardingDataArgs {
   // Goals
   goalType?: 'lose_weight' | 'maintain' | 'gain_muscle' | 'general_health';
   targetWeightLbs?: number;
+  targetDate?: string; // ISO date (YYYY-MM-DD)
 
   // Fitness
   activityLevel?: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active' | 'extremely_active';

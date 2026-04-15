@@ -19,11 +19,23 @@ export const saveOnboardingDataHandler: ToolHandler<SaveOnboardingDataArgs, Save
   console.log(`[save_onboarding_data] Saving ${providedFields.length} field(s) for user ${userId}:`,
     providedFields.map(([k]) => k));
 
+  // Check if onboarding is already completed - don't regress the status
+  const [existingStatus] = await db
+    .select({ onboardingStatus: onboardingProfiles.onboardingStatus })
+    .from(onboardingProfiles)
+    .where(eq(onboardingProfiles.userId, userId));
+
+  const alreadyFinalized =
+    existingStatus?.onboardingStatus === 'completed' ||
+    existingStatus?.onboardingStatus === 'skipped';
+
   // Build update object for onboarding_profiles
   const onboardingUpdate: Record<string, unknown> = {
     updatedAt: new Date(),
-    onboardingStatus: 'in_progress',
   };
+  if (!alreadyFinalized) {
+    onboardingUpdate.onboardingStatus = 'in_progress';
+  }
 
   // Build update object for user_profiles (for goal-related fields)
   const profileUpdate: Record<string, unknown> = {
@@ -117,6 +129,9 @@ export const saveOnboardingDataHandler: ToolHandler<SaveOnboardingDataArgs, Save
   if (args.targetWeightLbs !== undefined) {
     profileUpdate.targetWeightLbs = String(Math.round(args.targetWeightLbs * 100) / 100);
     profileUpdate.targetWeightKg = String(Math.round(args.targetWeightLbs * LBS_TO_KG * 100) / 100);
+  }
+  if (args.targetDate !== undefined) {
+    profileUpdate.targetDate = args.targetDate;
   }
   if (args.preferredUnits !== undefined) {
     profileUpdate.preferredUnits = args.preferredUnits;

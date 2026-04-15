@@ -23,6 +23,8 @@ interface TodayState {
   totalFatG: number;
   remainingCalories: number | null;
   remainingProteinG: number | null;
+  remainingCarbsG: number | null;
+  remainingFatG: number | null;
 }
 
 interface WeekState {
@@ -144,7 +146,13 @@ async function fetchTodayState(userId: string, profile: UserProfile | null): Pro
       ? profile.dailyCalorieTarget - totalCalories
       : null,
     remainingProteinG: profile?.dailyProteinTargetG
-      ? profile.dailyProteinTargetG - totalProteinG
+      ? Math.round((profile.dailyProteinTargetG - totalProteinG) * 10) / 10
+      : null,
+    remainingCarbsG: profile?.dailyCarbsTargetG
+      ? Math.round((profile.dailyCarbsTargetG - totalCarbsG) * 10) / 10
+      : null,
+    remainingFatG: profile?.dailyFatTargetG
+      ? Math.round((profile.dailyFatTargetG - totalFatG) * 10) / 10
       : null,
   };
 }
@@ -235,7 +243,17 @@ function buildUserContextXml(profile: UserProfile | null): string {
     parts.push(`<target-weight>${profile.targetWeightLbs} lbs</target-weight>`);
   }
 
+  if (profile.targetDate) {
+    parts.push(`<target-date>${profile.targetDate}</target-date>`);
+  }
+
   return parts.join('\n    ');
+}
+
+function formatRemaining(value: number | null, unit: string): string {
+  if (value === null) return 'no target set';
+  if (value < 0) return `${Math.abs(value)}${unit} OVER target`;
+  return `${value}${unit}`;
 }
 
 function buildCurrentStateXml(state: CurrentState): string {
@@ -262,9 +280,11 @@ function buildCurrentStateXml(state: CurrentState): string {
         <carbs>${state.today.totalCarbsG}g</carbs>
         <fat>${state.today.totalFatG}g</fat>
       </totals>
-      <remaining>
-        <calories>${state.today.remainingCalories ?? 'no target set'}</calories>
-        <protein>${state.today.remainingProteinG !== null ? `${state.today.remainingProteinG}g` : 'no target set'}</protein>
+      <remaining note="negative values mean user is OVER target — frame as recovery, not headroom">
+        <calories>${formatRemaining(state.today.remainingCalories, '')}</calories>
+        <protein>${formatRemaining(state.today.remainingProteinG, 'g')}</protein>
+        <carbs>${formatRemaining(state.today.remainingCarbsG, 'g')}</carbs>
+        <fat>${formatRemaining(state.today.remainingFatG, 'g')}</fat>
       </remaining>
     </today>
     <week>
@@ -516,7 +536,8 @@ async function buildOnboardingPrompt(
 
 async function buildRegularPrompt(
   userId: string,
-  profile: UserProfile | null
+  profile: UserProfile | null,
+  onboardingProfile: OnboardingProfile | null
 ): Promise<string> {
   const now = new Date();
   const timezone = profile?.timezone ?? 'America/New_York';
@@ -568,13 +589,29 @@ async function buildRegularPrompt(
 
   const template = loadPromptTemplate();
   const userContextXml = buildUserContextXml(profile);
+  const personalStatsXml = buildCollectedDataXml(onboardingProfile);
   const currentStateXml = buildCurrentStateXml(currentState);
   const conversationTimingXml = buildConversationTimingXml(conversationTiming);
+  const onboardingSignalXml = buildJustCompletedOnboardingXml(onboardingProfile, now);
 
   return template
     .replace('{{USER_CONTEXT}}', userContextXml)
+    .replace('{{PERSONAL_STATS}}', personalStatsXml)
     .replace('{{CURRENT_STATE}}', currentStateXml)
-    .replace('{{CONVERSATION_TIMING}}', conversationTimingXml);
+    .replace('{{CONVERSATION_TIMING}}', conversationTimingXml)
+    .replace('{{ONBOARDING_SIGNAL}}', onboardingSignalXml);
+}
+
+function buildJustCompletedOnboardingXml(
+  onboardingProfile: OnboardingProfile | null,
+  now: Date
+): string {
+  if (!onboardingProfile?.onboardingCompletedAt) {
+    return '<just-completed-onboarding>false</just-completed-onboarding>';
+  }
+  const elapsedMs = now.getTime() - onboardingProfile.onboardingCompletedAt.getTime();
+  const justFinished = elapsedMs >= 0 && elapsedMs < 5 * 60 * 1000; // 5 min window
+  return `<just-completed-onboarding>${justFinished}</just-completed-onboarding>`;
 }
 
 export async function buildSystemPrompt(context: UserContext): Promise<string> {
@@ -592,5 +629,5 @@ export async function buildSystemPrompt(context: UserContext): Promise<string> {
   }
 
   // Regular coaching mode
-  return buildRegularPrompt(userId, profile);
+  return buildRegularPrompt(userId, profile, onboardingProfile);
 }

@@ -12,6 +12,7 @@ export const updateGoalsHandler: ToolHandler<UpdateGoalsArgs, UpdateGoalsResult>
   const {
     dailyCalorieTarget,
     targetWeightLbs,
+    targetDate,
     goalType,
     dailyProteinTargetG,
     dailyCarbsTargetG,
@@ -22,6 +23,7 @@ export const updateGoalsHandler: ToolHandler<UpdateGoalsArgs, UpdateGoalsResult>
   if (
     dailyCalorieTarget === undefined &&
     targetWeightLbs === undefined &&
+    targetDate === undefined &&
     goalType === undefined &&
     dailyProteinTargetG === undefined &&
     dailyCarbsTargetG === undefined &&
@@ -70,6 +72,12 @@ export const updateGoalsHandler: ToolHandler<UpdateGoalsArgs, UpdateGoalsResult>
     // Also store kg equivalent for DB consistency
     updateData.targetWeightKg = String(Math.round(targetWeightLbs * LBS_TO_KG * 100) / 100);
   }
+  if (targetDate !== undefined) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(targetDate)) {
+      throw new Error('Invalid targetDate: must be ISO format YYYY-MM-DD');
+    }
+    updateData.targetDate = targetDate;
+  }
   if (goalType !== undefined) {
     updateData.goalType = goalType;
   }
@@ -99,6 +107,7 @@ export const updateGoalsHandler: ToolHandler<UpdateGoalsArgs, UpdateGoalsResult>
     updatedGoals: {
       dailyCalorieTarget: updated.dailyCalorieTarget,
       targetWeightLbs: updated.targetWeightLbs ? parseFloat(updated.targetWeightLbs) : null,
+      targetDate: updated.targetDate ?? null,
       goalType: updated.goalType,
       dailyProteinTargetG: updated.dailyProteinTargetG,
       dailyCarbsTargetG: updated.dailyCarbsTargetG,
