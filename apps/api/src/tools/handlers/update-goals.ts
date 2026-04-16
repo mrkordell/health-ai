@@ -1,4 +1,3 @@
-import { eq } from 'drizzle-orm';
 import { db, userProfiles } from '../../db';
 import type { ToolHandler, UpdateGoalsArgs, UpdateGoalsResult } from '../types';
 
@@ -91,14 +90,25 @@ export const updateGoalsHandler: ToolHandler<UpdateGoalsArgs, UpdateGoalsResult>
     updateData.dailyFatTargetG = Math.round(dailyFatTargetG);
   }
 
+  // Upsert so we don't silently drop targets if the userProfiles row is
+  // missing (which has happened for edge-case accounts). The insert branch
+  // uses the same values; onConflict applies the incremental update.
+  const insertValues: Record<string, unknown> = { userId };
+  for (const [key, value] of Object.entries(updateData)) {
+    if (key !== 'updatedAt') insertValues[key] = value;
+  }
+
   const [updated] = await db
-    .update(userProfiles)
-    .set(updateData)
-    .where(eq(userProfiles.userId, userId))
+    .insert(userProfiles)
+    .values(insertValues as typeof userProfiles.$inferInsert)
+    .onConflictDoUpdate({
+      target: userProfiles.userId,
+      set: updateData,
+    })
     .returning();
 
   if (!updated) {
-    throw new Error('User profile not found');
+    throw new Error('Failed to save goals');
   }
 
   return {

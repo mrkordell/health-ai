@@ -151,18 +151,31 @@ export const completeOnboardingHandler: ToolHandler<CompleteOnboardingArgs, Comp
   // Calculate recommended nutrition targets
   const recommendations = calculateRecommendedTargets(onboarding ?? null, profile ?? null);
 
-  // Update user profile with calculated targets
+  // Upsert user profile with calculated targets.
+  // A bare UPDATE would be a silent no-op if the userProfiles row doesn't
+  // exist yet, which has happened — so we insert-on-conflict-update to
+  // guarantee the targets actually land in the DB.
   await db
-    .update(userProfiles)
-    .set({
+    .insert(userProfiles)
+    .values({
+      userId,
       dailyCalorieTarget: recommendations.dailyCalorieTarget,
       dailyProteinTargetG: recommendations.dailyProteinTargetG,
       dailyCarbsTargetG: recommendations.dailyCarbsTargetG,
       dailyFatTargetG: recommendations.dailyFatTargetG,
       onboardingComplete: true,
-      updatedAt: new Date(),
     })
-    .where(eq(userProfiles.userId, userId));
+    .onConflictDoUpdate({
+      target: userProfiles.userId,
+      set: {
+        dailyCalorieTarget: recommendations.dailyCalorieTarget,
+        dailyProteinTargetG: recommendations.dailyProteinTargetG,
+        dailyCarbsTargetG: recommendations.dailyCarbsTargetG,
+        dailyFatTargetG: recommendations.dailyFatTargetG,
+        onboardingComplete: true,
+        updatedAt: new Date(),
+      },
+    });
 
   // Mark onboarding as complete
   const onboardingStatus = args.skipReason ? 'skipped' : 'completed';

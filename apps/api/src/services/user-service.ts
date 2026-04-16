@@ -15,15 +15,27 @@ export async function getOrCreateUser(clerkUserId: string): Promise<UserWithProf
     .limit(1);
 
   if (existingUser.length > 0) {
-    const profile = await db
+    const existingProfile = await db
       .select()
       .from(userProfiles)
       .where(eq(userProfiles.userId, clerkUserId))
       .limit(1);
 
+    // Backfill: some older accounts are missing a userProfiles row, which
+    // silently breaks target persistence. Create one on the fly.
+    let profile = existingProfile[0];
+    if (!profile) {
+      console.warn(`[getOrCreateUser] Backfilling missing userProfiles row for ${clerkUserId}`);
+      const [created] = await db
+        .insert(userProfiles)
+        .values({ userId: clerkUserId })
+        .returning();
+      profile = created;
+    }
+
     return {
-      user: existingUser[0],
-      profile: profile[0],
+      user: existingUser[0]!,
+      profile: profile!,
     };
   }
 
@@ -52,8 +64,8 @@ export async function getOrCreateUser(clerkUserId: string): Promise<UserWithProf
     .returning();
 
   return {
-    user: newUser,
-    profile: newProfile,
+    user: newUser!,
+    profile: newProfile!,
   };
 }
 
