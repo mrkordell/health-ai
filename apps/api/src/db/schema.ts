@@ -247,6 +247,27 @@ export const conversationHistory = pgTable(
   ]
 );
 
+export const conversationSummaries = pgTable(
+  'conversation_summaries',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.clerkUserId, { onDelete: 'cascade' }),
+    summary: text('summary').notNull(),
+    messagesFrom: timestamp('messages_from', { withTimezone: true }).notNull(),
+    messagesTo: timestamp('messages_to', { withTimezone: true }).notNull(),
+    messageCount: integer('message_count').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('idx_conversation_summaries_user').on(table.userId),
+    index('idx_conversation_summaries_user_date').on(table.userId, table.messagesTo),
+  ]
+);
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -260,6 +281,8 @@ export type WeightLog = typeof weightLogs.$inferSelect;
 export type NewWeightLog = typeof weightLogs.$inferInsert;
 export type ConversationMessage = typeof conversationHistory.$inferSelect;
 export type NewConversationMessage = typeof conversationHistory.$inferInsert;
+export type ConversationSummary = typeof conversationSummaries.$inferSelect;
+export type NewConversationSummary = typeof conversationSummaries.$inferInsert;
 
 // Enum constants for type-safe usage
 export const MealType = {

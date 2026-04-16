@@ -28,6 +28,8 @@ const TOOL_LABELS: Record<string, string> = {
   suggest_meal: 'Suggesting a meal',
   save_onboarding_data: 'Saving your profile',
   complete_onboarding: 'Completing setup',
+  search_meals: 'Searching meal history',
+  search_conversations: 'Searching past conversations',
 };
 
 function getToolLabel(toolName: string): string {

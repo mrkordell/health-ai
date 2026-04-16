@@ -8,3 +8,5 @@ export { suggestMealHandler } from './suggest-meal';
 export { getWeeklyProgressHandler } from './get-weekly-progress';
 export { saveOnboardingDataHandler } from './save-onboarding-data';
 export { completeOnboardingHandler } from './complete-onboarding';
+export { searchConversationsHandler } from './search-conversations';
+export { searchMealsHandler } from './search-meals';

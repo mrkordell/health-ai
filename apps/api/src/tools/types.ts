@@ -231,6 +231,21 @@ export interface CompleteOnboardingArgs {
   skipReason?: string;
 }
 
+export interface SearchConversationsArgs {
+  query: string;
+  dateFrom?: string; // YYYY-MM-DD
+  dateTo?: string;   // YYYY-MM-DD
+}
+
+export interface SearchConversationsResult {
+  messages: Array<{
+    date: string;
+    role: string;
+    content: string;
+  }>;
+  totalFound: number;
+}
+
 export interface CompleteOnboardingResult {
   success: boolean;
   message: string;
@@ -247,4 +262,40 @@ export interface CompleteOnboardingResult {
     targetWeightLbs: number | null;
     activityLevel: string | null;
   };
+}
+
+// Search tools
+export interface SearchMealsArgs {
+  query?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+}
+
+export interface SearchMealsResult {
+  meals: Array<{
+    date: string;
+    mealType: string;
+    description: string;
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+  }>;
+  totalFound: number;
+}
+
+export interface SearchConversationsArgs {
+  query: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface SearchConversationsResult {
+  messages: Array<{
+    date: string;
+    role: string;
+    content: string;
+  }>;
+  totalFound: number;
 }

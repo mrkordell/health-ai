@@ -12,6 +12,8 @@ import {
   getWeeklyProgressHandler,
   saveOnboardingDataHandler,
   completeOnboardingHandler,
+  searchMealsHandler,
+  searchConversationsHandler,
 } from './handlers';
 
 const toolRegistry: ToolRegistry = {
@@ -25,6 +27,8 @@ const toolRegistry: ToolRegistry = {
   get_weekly_progress: getWeeklyProgressHandler,
   save_onboarding_data: saveOnboardingDataHandler,
   complete_onboarding: completeOnboardingHandler,
+  search_meals: searchMealsHandler,
+  search_conversations: searchConversationsHandler,
 };
 
 export function registerTool(name: ToolName, handler: ToolHandler): void {
@@ -95,4 +99,8 @@ export type {
   SaveOnboardingDataResult,
   CompleteOnboardingArgs,
   CompleteOnboardingResult,
+  SearchMealsArgs,
+  SearchMealsResult,
+  SearchConversationsArgs,
+  SearchConversationsResult,
 } from './types';

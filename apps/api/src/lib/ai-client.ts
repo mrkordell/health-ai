@@ -169,4 +169,28 @@ export type ToolResult = {
   result: unknown;
 };
 
+/**
+ * Send a simple text prompt with no tools. Used for background summarization
+ * and other utility LLM calls where we just want text back.
+ */
+export async function sendSimpleCompletion(
+  systemPrompt: string,
+  userContent: string
+): Promise<string> {
+  const response = await withRetry(() =>
+    withTimeout(
+      client.chat.send({
+        model: env.OPENROUTER_MODEL,
+        messages: [
+          { role: 'system' as const, content: systemPrompt },
+          { role: 'user' as const, content: userContent },
+        ] as Parameters<typeof client.chat.send>[0]['messages'],
+      }),
+      REQUEST_TIMEOUT_MS
+    )
+  );
+
+  return response.choices?.[0]?.message?.content?.toString() ?? '';
+}
+
 export { client as openRouterClient };

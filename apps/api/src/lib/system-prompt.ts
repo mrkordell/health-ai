@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { eq, and, gte, lte, desc } from 'drizzle-orm';
 import { db, meals, weightLogs, userProfiles, onboardingProfiles, conversationHistory, getTodayRange, getLastNDaysRange } from '../db';
 import type { UserProfile, OnboardingProfile } from '../db/schema';
+import { getConversationSummaries } from './summarization';
 
 export interface UserContext {
   userId: string;
@@ -568,10 +569,11 @@ async function buildRegularPrompt(
 
   const currentHour = parseInt(hourFormatter.format(now), 10);
 
-  const [todayState, weekState, conversationTiming] = await Promise.all([
+  const [todayState, weekState, conversationTiming, summaries] = await Promise.all([
     fetchTodayState(userId, profile),
     fetchWeekState(userId, profile),
     fetchConversationTiming(userId, timezone, now),
+    getConversationSummaries(userId),
   ]);
 
   const currentState: CurrentState = {
@@ -594,13 +596,31 @@ async function buildRegularPrompt(
   const currentStateXml = buildCurrentStateXml(currentState);
   const conversationTimingXml = buildConversationTimingXml(conversationTiming);
   const onboardingSignalXml = buildJustCompletedOnboardingXml(onboardingProfile, now);
+  const historySummaryXml = buildHistorySummaryXml(summaries);
 
   return template
     .replace('{{USER_CONTEXT}}', userContextXml)
     .replace('{{PERSONAL_STATS}}', personalStatsXml)
     .replace('{{CURRENT_STATE}}', currentStateXml)
     .replace('{{CONVERSATION_TIMING}}', conversationTimingXml)
+    .replace('{{HISTORY_SUMMARY}}', historySummaryXml)
     .replace('{{ONBOARDING_SIGNAL}}', onboardingSignalXml);
+}
+
+function buildHistorySummaryXml(
+  summaries: Array<{ summary: string; messagesFrom: Date; messagesTo: Date; messageCount: number }>
+): string {
+  if (summaries.length === 0) {
+    return '<no-summary>No prior conversation history summarized yet.</no-summary>';
+  }
+
+  return summaries
+    .map((s) => {
+      const from = s.messagesFrom.toISOString().split('T')[0];
+      const to = s.messagesTo.toISOString().split('T')[0];
+      return `<period from="${from}" to="${to}" messages="${s.messageCount}">${s.summary}</period>`;
+    })
+    .join('\n    ');
 }
 
 function buildJustCompletedOnboardingXml(

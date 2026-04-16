@@ -9,6 +9,7 @@ import {
 } from '../lib/ai-client';
 import { regularTools, onboardingTools } from '../lib/tool-definitions';
 import { buildSystemPrompt, getOnboardingProfile, isOnboardingRequired } from '../lib/system-prompt';
+import { maybeSummarizeHistory } from '../lib/summarization';
 import { executeToolCall } from '../tools';
 import { db, conversationHistory } from '../db';
 import { eq, desc } from 'drizzle-orm';
@@ -19,7 +20,31 @@ const chatRequestSchema = z.object({
 });
 
 const MAX_TOOL_ITERATIONS = 10;
-const CONVERSATION_HISTORY_LIMIT = 24; // Enough for coaching continuity across onboarding + sessions
+
+// Token-budget based history management.
+// Haiku 3.5 has a 200k context window. We reserve space for the system prompt
+// (which includes injected state), tool definitions, and the output response.
+// Remaining budget is for conversation history. We still cap the DB fetch to
+// avoid loading years of history into memory.
+const MODEL_CONTEXT_WINDOW = 200_000;
+const SYSTEM_AND_TOOLS_BUDGET = 5_000;
+const RESPONSE_BUDGET = 2_000;
+const HISTORY_TOKEN_BUDGET = MODEL_CONTEXT_WINDOW - SYSTEM_AND_TOOLS_BUDGET - RESPONSE_BUDGET;
+const MAX_HISTORY_MESSAGES = 200;
+
+function estimateTokens(text: string): number {
+  // Approximate: English averages ~4 chars per token.
+  return Math.ceil(text.length / 4);
+}
+
+function messageTokens(msg: ChatMessage): number {
+  if (msg.role === 'tool') return estimateTokens(msg.content);
+  if (msg.role === 'assistant' && msg.toolCalls?.length) {
+    // Tool calls are serialized to JSON when sent to the model.
+    return estimateTokens(msg.content) + estimateTokens(JSON.stringify(msg.toolCalls));
+  }
+  return estimateTokens(msg.content);
+}
 
 async function getConversationHistory(userId: string): Promise<ChatMessage[]> {
   const history = await db
@@ -27,7 +52,7 @@ async function getConversationHistory(userId: string): Promise<ChatMessage[]> {
     .from(conversationHistory)
     .where(eq(conversationHistory.userId, userId))
     .orderBy(desc(conversationHistory.createdAt))
-    .limit(CONVERSATION_HISTORY_LIMIT);
+    .limit(MAX_HISTORY_MESSAGES);
 
   const messages: ChatMessage[] = [];
 
@@ -63,6 +88,28 @@ async function getConversationHistory(userId: string): Promise<ChatMessage[]> {
       } else {
         // Plain assistant message without tool calls
         messages.push({ role: 'assistant', content: msg.content });
+      }
+    }
+  }
+
+  // Trim oldest messages until total tokens fit within budget.
+  // Keep tool-call / tool-result pairs together: if an assistant-with-toolCalls
+  // is removed, drop the matching tool-result messages that follow it.
+  let totalTokens = messages.reduce((sum, m) => sum + messageTokens(m), 0);
+
+  while (totalTokens > HISTORY_TOKEN_BUDGET && messages.length > 2) {
+    const removed = messages.shift()!;
+    totalTokens -= messageTokens(removed);
+
+    if (removed.role === 'assistant' && removed.toolCalls?.length) {
+      const toolCallIds = new Set(removed.toolCalls.map((tc) => tc.id));
+      while (
+        messages.length > 0 &&
+        messages[0]!.role === 'tool' &&
+        toolCallIds.has((messages[0] as { toolCallId: string }).toolCallId)
+      ) {
+        const toolMsg = messages.shift()!;
+        totalTokens -= messageTokens(toolMsg);
       }
     }
   }
@@ -290,6 +337,10 @@ export async function chatRoutes(fastify: FastifyInstance): Promise<void> {
         // Send done event and close connection
         sendEvent('done', {});
         reply.raw.end();
+
+        // Fire-and-forget background summarization — never blocks the response.
+        // Errors are logged inside maybeSummarizeHistory.
+        void maybeSummarizeHistory(userId);
       } catch (error) {
         request.log.error({ error }, 'Chat request failed');
 

@@ -353,6 +353,58 @@ export const completeOnboarding: ToolDefinition = {
   },
 };
 
+export const searchMeals: ToolDefinition = {
+  name: 'search_meals',
+  description:
+    'Search the user\'s meal history by keyword, date range, or meal type. Use when the user asks about past meals, wants to find something they ate before, or needs historical meal data. If no filters provided, returns the last 30 days of meals.',
+  parameters: {
+    type: 'object',
+    properties: {
+      query: {
+        type: 'string',
+        description: 'Keyword to search for in meal descriptions (e.g., "chicken", "pizza", "salad")',
+      },
+      dateFrom: {
+        type: 'string',
+        description: 'Start date for search range, ISO format YYYY-MM-DD',
+      },
+      dateTo: {
+        type: 'string',
+        description: 'End date for search range, ISO format YYYY-MM-DD',
+      },
+      mealType: {
+        type: 'string',
+        enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+        description: 'Filter by meal type',
+      },
+    },
+  },
+};
+
+export const searchConversations: ToolDefinition = {
+  name: 'search_conversations',
+  description:
+    'Search past conversation history by keyword. Use when the user references a past discussion, asks "what did we talk about regarding X?", or wants to recall previous coaching advice.',
+  parameters: {
+    type: 'object',
+    properties: {
+      query: {
+        type: 'string',
+        description: 'Keyword or phrase to search for in past messages',
+      },
+      dateFrom: {
+        type: 'string',
+        description: 'Start date for search range, ISO format YYYY-MM-DD',
+      },
+      dateTo: {
+        type: 'string',
+        description: 'End date for search range, ISO format YYYY-MM-DD',
+      },
+    },
+    required: ['query'],
+  },
+};
+
 // Regular coaching tools (available after onboarding)
 export const regularTools: ToolDefinition[] = [
   estimateNutrition,
@@ -364,6 +416,8 @@ export const regularTools: ToolDefinition[] = [
   suggestMeal,
   getWeeklyProgress,
   saveOnboardingData,
+  searchMeals,
+  searchConversations,
 ];
 
 // Onboarding-only tools (save_onboarding_data is in regularTools since it's used post-onboarding too)
@@ -387,4 +441,6 @@ export type ToolName =
   | 'suggest_meal'
   | 'get_weekly_progress'
   | 'save_onboarding_data'
-  | 'complete_onboarding';
+  | 'complete_onboarding'
+  | 'search_meals'
+  | 'search_conversations';
