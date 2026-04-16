@@ -387,7 +387,7 @@ function buildConversationTimingXml(timing: ConversationTiming): string {
     </conversation-timing>`;
 }
 
-function buildCollectedDataXml(onboardingProfile: OnboardingProfile | null): string {
+function buildCollectedDataXml(onboardingProfile: OnboardingProfile | null, latestWeightLbs?: number | null): string {
   if (!onboardingProfile) {
     return '<no-data>No data collected yet. This is a brand new user.</no-data>';
   }
@@ -407,7 +407,8 @@ function buildCollectedDataXml(onboardingProfile: OnboardingProfile | null): str
 
   // Physical stats
   if (onboardingProfile.currentWeightLbs) {
-    parts.push(`<current-weight>${onboardingProfile.currentWeightLbs} lbs</current-weight>`);
+    const weightToShow = latestWeightLbs ?? onboardingProfile.currentWeightLbs;
+    parts.push(`<current-weight>${weightToShow} lbs</current-weight>`);
   }
   if (onboardingProfile.heightFeet || onboardingProfile.heightInches) {
     const feet = onboardingProfile.heightFeet ?? 0;
@@ -589,7 +590,7 @@ async function buildRegularPrompt(
 
   const template = loadPromptTemplate();
   const userContextXml = buildUserContextXml(profile);
-  const personalStatsXml = buildCollectedDataXml(onboardingProfile);
+  const personalStatsXml = buildCollectedDataXml(onboardingProfile, weekState.lastWeightLbs);
   const currentStateXml = buildCurrentStateXml(currentState);
   const conversationTimingXml = buildConversationTimingXml(conversationTiming);
   const onboardingSignalXml = buildJustCompletedOnboardingXml(onboardingProfile, now);

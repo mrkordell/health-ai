@@ -7,8 +7,8 @@ import {
   type ToolCall,
   type ToolResult,
 } from '../lib/ai-client';
-import { allTools } from '../lib/tool-definitions';
-import { buildSystemPrompt } from '../lib/system-prompt';
+import { regularTools, onboardingTools } from '../lib/tool-definitions';
+import { buildSystemPrompt, getOnboardingProfile, isOnboardingRequired } from '../lib/system-prompt';
 import { executeToolCall } from '../tools';
 import { db, conversationHistory } from '../db';
 import { eq, desc } from 'drizzle-orm';
@@ -18,10 +18,8 @@ const chatRequestSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty').max(10000),
 });
 
-type ChatRequest = z.infer<typeof chatRequestSchema>;
-
 const MAX_TOOL_ITERATIONS = 10;
-const CONVERSATION_HISTORY_LIMIT = 6; // Keep recent context minimal - system prompt has today's state
+const CONVERSATION_HISTORY_LIMIT = 24; // Enough for coaching continuity across onboarding + sessions
 
 async function getConversationHistory(userId: string): Promise<ChatMessage[]> {
   const history = await db
@@ -157,7 +155,7 @@ export async function chatRoutes(fastify: FastifyInstance): Promise<void> {
       if (!parseResult.success) {
         return reply.status(400).send({
           error: 'Validation Error',
-          message: parseResult.error.issues[0].message,
+          message: parseResult.error.issues[0]?.message ?? 'Invalid request',
         });
       }
 
@@ -190,11 +188,18 @@ export async function chatRoutes(fastify: FastifyInstance): Promise<void> {
           profile: userProfile,
         });
 
+        // Determine which tools to expose based on onboarding state
+        const onboardingProfile = await getOnboardingProfile(userId);
+        const needsOnboarding = isOnboardingRequired(userProfile, onboardingProfile);
+        const tools = needsOnboarding
+          ? [...regularTools, ...onboardingTools]
+          : regularTools;
+
         const messages: ChatMessage[] = [...history, { role: 'user' as const, content: message }];
 
         await saveMessage(userId, 'user', message);
 
-        let response = await sendChatWithTools(messages, allTools, systemPrompt);
+        let response = await sendChatWithTools(messages, tools, systemPrompt);
         let iterations = 0;
         let allToolCalls: ToolCall[] = [];
         let allToolResults: ToolResult[] = [];
@@ -258,7 +263,7 @@ export async function chatRoutes(fastify: FastifyInstance): Promise<void> {
             });
           }
 
-          response = await sendChatWithTools(messages, allTools, systemPrompt);
+          response = await sendChatWithTools(messages, tools, systemPrompt);
         }
 
         if (iterations >= MAX_TOOL_ITERATIONS && response.toolCalls.length > 0) {

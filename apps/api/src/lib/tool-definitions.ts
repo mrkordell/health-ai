@@ -8,10 +8,10 @@ export type ToolDefinition = {
   };
 };
 
-export const lookupNutrition: ToolDefinition = {
-  name: 'lookup_nutrition',
+export const estimateNutrition: ToolDefinition = {
+  name: 'estimate_nutrition',
   description:
-    'Get nutrition estimation guidance for a food item. Use this before logging meals to get calorie and macro estimates. Returns instructions for you to estimate nutrition values based on your knowledge.',
+    'Estimate nutrition values for a food item using AI knowledge. Returns guidance for estimating calories and macros. These are AI estimates, not database lookups.',
   parameters: {
     type: 'object',
     properties: {
@@ -28,7 +28,7 @@ export const lookupNutrition: ToolDefinition = {
 export const logMeal: ToolDefinition = {
   name: 'log_meal',
   description:
-    'Log a meal to the user database. Call this after looking up nutrition data or when the user provides their own estimates.',
+    'Log a meal to the user database. Call this after estimating nutrition or when the user provides their own values.',
   parameters: {
     type: 'object',
     properties: {
@@ -355,7 +355,7 @@ export const completeOnboarding: ToolDefinition = {
 
 // Regular coaching tools (available after onboarding)
 export const regularTools: ToolDefinition[] = [
-  lookupNutrition,
+  estimateNutrition,
   logMeal,
   logWeight,
   getTodaySummary,
@@ -366,9 +366,8 @@ export const regularTools: ToolDefinition[] = [
   saveOnboardingData,
 ];
 
-// Onboarding tools
+// Onboarding-only tools (save_onboarding_data is in regularTools since it's used post-onboarding too)
 export const onboardingTools: ToolDefinition[] = [
-  saveOnboardingData,
   completeOnboarding,
 ];
 
@@ -379,7 +378,7 @@ export const allTools: ToolDefinition[] = [
 ];
 
 export type ToolName =
-  | 'lookup_nutrition'
+  | 'estimate_nutrition'
   | 'log_meal'
   | 'log_weight'
   | 'get_today_summary'

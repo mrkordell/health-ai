@@ -110,8 +110,6 @@ export async function sendChatMessageStream(
   token: string,
   callbacks: ChatStreamCallbacks
 ): Promise<void> {
-  console.log('[SSE] Starting chat stream request');
-
   const response = await fetch(`${API_BASE_URL}/api/chat`, {
     method: 'POST',
     headers: {
@@ -121,12 +119,8 @@ export async function sendChatMessageStream(
     body: JSON.stringify({ message }),
   });
 
-  console.log('[SSE] Response status:', response.status);
-  console.log('[SSE] Response headers:', Object.fromEntries(response.headers.entries()));
-
   if (!response.ok) {
     const errorText = await response.text();
-    console.log('[SSE] Error response body:', errorText);
     try {
       const error = JSON.parse(errorText);
       throw new ApiError(error.message || 'Request failed', response.status, error.code);
@@ -138,36 +132,25 @@ export async function sendChatMessageStream(
 
   const reader = response.body?.getReader();
   if (!reader) {
-    console.log('[SSE] No response body reader');
     throw new Error('No response body');
   }
 
   const decoder = new TextDecoder();
   let buffer = '';
 
-  console.log('[SSE] Starting to read stream');
-
   while (true) {
     const { done, value } = await reader.read();
-    if (done) {
-      console.log('[SSE] Stream done');
-      break;
-    }
+    if (done) break;
 
     const chunk = decoder.decode(value, { stream: true });
-    console.log('[SSE] Received chunk:', chunk);
     buffer += chunk;
 
     // Split by double newline to get complete events
     const events = buffer.split('\n\n');
     buffer = events.pop() || ''; // Keep incomplete event in buffer
 
-    console.log('[SSE] Parsed events count:', events.length, 'Remaining buffer:', buffer);
-
     for (const event of events) {
       if (!event.trim()) continue;
-
-      console.log('[SSE] Processing event:', event);
 
       const lines = event.split('\n');
       let eventType = '';
@@ -181,36 +164,26 @@ export async function sendChatMessageStream(
         }
       }
 
-      console.log('[SSE] Event type:', eventType, 'Data:', eventData);
-
       if (eventType && eventData) {
         try {
           const data = JSON.parse(eventData);
-          console.log('[SSE] Parsed data:', data);
 
           switch (eventType) {
             case 'tool_start':
-              console.log('[SSE] Calling onToolStart:', data.id, data.name);
               callbacks.onToolStart?.(data.id, data.name);
               break;
             case 'tool_end':
-              console.log('[SSE] Calling onToolEnd:', data.id, data.name, data.success);
               callbacks.onToolEnd?.(data.id, data.name, data.success);
               break;
             case 'message':
-              console.log('[SSE] Calling onMessage:', data.content?.substring(0, 50) + '...');
               callbacks.onMessage?.(data.content);
               break;
             case 'error':
-              console.log('[SSE] Calling onError:', data.code, data.message);
               callbacks.onError?.(data.code, data.message);
               break;
             case 'done':
-              console.log('[SSE] Calling onDone');
               callbacks.onDone?.();
               break;
-            default:
-              console.log('[SSE] Unknown event type:', eventType);
           }
         } catch (e) {
           console.error('[SSE] Parse error:', e, 'Raw data:', eventData);
@@ -218,8 +191,6 @@ export async function sendChatMessageStream(
       }
     }
   }
-
-  console.log('[SSE] Stream processing complete');
 }
 
 // Onboarding status

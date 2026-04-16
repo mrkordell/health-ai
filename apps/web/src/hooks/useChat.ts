@@ -19,9 +19,7 @@ const ONBOARDING_WELCOME: Message = {
 const TOOL_LABELS: Record<string, string> = {
   log_meal: 'Logging your meal',
   log_weight: 'Logging your weight',
-  lookup_nutrition: 'Looking up nutritional info',
-  get_nutrition_info: 'Looking up nutritional info',
-  calculate_calories: 'Calculating calories',
+  estimate_nutrition: 'Estimating nutrition',
   get_meal_history: 'Checking meal history',
   get_weight_history: 'Checking weight history',
   get_today_summary: 'Getting today\'s summary',
@@ -145,6 +143,7 @@ export function useChat() {
             ? message
             : 'Failed to send message. Please try again.';
 
+          setActiveActions([]);
           setError(errorMessage);
 
           const errorResponse: Message = {
@@ -156,6 +155,7 @@ export function useChat() {
           setMessages((prev) => [...prev, errorResponse]);
         },
         onDone: () => {
+          setActiveActions([]);
           setIsLoading(false);
         },
       });
@@ -166,6 +166,7 @@ export function useChat() {
         ? err.message
         : 'Failed to send message. Please try again.';
 
+      setActiveActions([]);
       setError(errorMessage);
 
       const errorResponse: Message = {

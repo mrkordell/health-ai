@@ -15,7 +15,7 @@ import {
 } from './handlers';
 
 const toolRegistry: ToolRegistry = {
-  lookup_nutrition: lookupNutritionHandler,
+  estimate_nutrition: lookupNutritionHandler,
   log_meal: logMealHandler,
   log_weight: logWeightHandler,
   get_today_summary: getTodaySummaryHandler,
