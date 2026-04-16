@@ -1,4 +1,5 @@
 import { eq, and, gte, lte } from 'drizzle-orm';
+import { formatInTimeZone } from 'date-fns-tz';
 import { db, meals, userProfiles, getTodayRange } from '../../db';
 import type { ToolHandler, GetTodaySummaryArgs, GetTodaySummaryResult } from '../types';
 
@@ -18,7 +19,7 @@ export const getTodaySummaryHandler: ToolHandler<GetTodaySummaryArgs, GetTodaySu
   console.log(`[get_today_summary] Fetching summary for user ${userId} in timezone ${timezone}`);
 
   const { start, end } = getTodayRange(timezone);
-  const today = new Date().toISOString().split('T')[0] as string;
+  const today = formatInTimeZone(new Date(), timezone, 'yyyy-MM-dd');
 
   // Get today's meals
   const todayMeals = await db
@@ -71,6 +72,8 @@ export const getTodaySummaryHandler: ToolHandler<GetTodaySummaryArgs, GetTodaySu
     totalFatG: Math.round(totalFatG * 10) / 10,
     mealCount: todayMeals.length,
     meals: todayMeals.map((m) => ({
+      id: m.id,
+      loggedAt: formatInTimeZone(m.loggedAt, timezone, "yyyy-MM-dd'T'HH:mm"),
       mealType: m.mealType,
       description: m.description,
       calories: m.calories,

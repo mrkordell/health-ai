@@ -5,6 +5,15 @@ import { DailySummary } from './DailySummary';
 import { MealList } from './MealList';
 import { apiRequest } from '../../lib/api';
 
+// YYYY-MM-DD in the browser's local timezone — NOT toISOString(), which is UTC
+// and flips the day boundary for users in non-UTC zones.
+function formatLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 export interface Meal {
   id: string;
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
@@ -45,7 +54,7 @@ export function MealsScreen() {
       try {
         const token = await getToken();
         if (!token) throw new Error('Not authenticated');
-        const dateStr = selectedDate.toISOString().split('T')[0];
+        const dateStr = formatLocalDate(selectedDate);
         const data = await apiRequest<DayData>(`/api/meals?date=${dateStr}`, {
           headers: { Authorization: `Bearer ${token}` },
         });

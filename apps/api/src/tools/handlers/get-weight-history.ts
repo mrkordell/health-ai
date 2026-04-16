@@ -1,4 +1,5 @@
 import { eq, and, gte, lte, asc } from 'drizzle-orm';
+import { formatInTimeZone } from 'date-fns-tz';
 import { db, weightLogs, userProfiles, getLastNDaysRange } from '../../db';
 import type { ToolHandler, GetWeightHistoryArgs, GetWeightHistoryResult } from '../types';
 
@@ -40,7 +41,9 @@ export const getWeightHistoryHandler: ToolHandler<GetWeightHistoryArgs, GetWeigh
     .orderBy(asc(weightLogs.loggedAt));
 
   const entries = weights.map((w) => ({
-    date: w.loggedAt.toISOString().split('T')[0] as string,
+    id: w.id,
+    date: formatInTimeZone(w.loggedAt, timezone, 'yyyy-MM-dd'),
+    loggedAt: formatInTimeZone(w.loggedAt, timezone, "yyyy-MM-dd'T'HH:mm"),
     weightLbs: parseFloat(w.weightLbs),
     notes: w.notes ?? undefined,
   }));

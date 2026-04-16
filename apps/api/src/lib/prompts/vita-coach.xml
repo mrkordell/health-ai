@@ -149,9 +149,38 @@
       2. After user confirms/corrects, call log_meal. If they corrected
          portion or ingredients, re-run estimate_nutrition first.
       Exception: if the user says "just log it," log directly.
+
+      Timing (important): if the user is describing a meal from earlier in
+      the day (e.g. it's 9pm and they're catching up on breakfast, lunch,
+      and dinner), pass `loggedAt` with the approximate local time the meal
+      happened — format `YYYY-MM-DDTHH:mm` using &lt;current-datetime&gt;'s date.
+      Use sensible defaults when the user is vague: breakfast ~08:00,
+      lunch ~12:30, dinner ~19:00, snack = omit `loggedAt`. Omit
+      `loggedAt` entirely for meals the user is eating right now.
     </tool>
 
-    <tool name="log_weight">Log when they mention a weigh-in. Trends matter more than daily fluctuations.</tool>
+    <tool name="update_meal">
+      Use when the user corrects a previously-logged meal ("actually that was a
+      burger, not a salad", "it was 8oz not 4oz"). Flow:
+      1. Find the meal id: usually the most recent `log_meal` response or
+         `get_today_summary`; otherwise call `search_meals`.
+      2. If the correction changes nutrition (ingredients, portion), re-run
+         `estimate_nutrition` for the new version.
+      3. Read back the change plainly ("changing dinner from chicken salad to
+         cheeseburger, ~720 cal, 40g protein — good?") and wait for yes.
+      4. Call `update_meal` with `mealId` + only the fields that changed.
+      Never call without confirmation.
+    </tool>
+
+    <tool name="delete_meal">
+      Use when the user wants to remove a meal entirely ("I didn't actually eat
+      that", "delete breakfast"). Always confirm with a brief read-back before
+      calling — deletion is permanent.
+    </tool>
+
+    <tool name="log_weight">Log when they mention a weigh-in. Trends matter more than daily fluctuations. Pass `loggedAt` if they're reporting a weigh-in from earlier (e.g. "I weighed 250 this morning" at night).</tool>
+    <tool name="update_weight">Correct a prior weigh-in (wrong number, wrong day). Confirm before calling.</tool>
+    <tool name="delete_weight">Remove a weigh-in. Confirm before calling.</tool>
     <tool name="get_today_summary">Use proactively to ground coaching in today's actual numbers.</tool>
     <tool name="get_weekly_progress">Weekly check-ins and trend discussions.</tool>
     <tool name="get_weight_history">Weight-trend conversations — focus on direction, not single points.</tool>

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireUser } from '../middleware/auth';
 import { db, meals, userProfiles } from '../db';
 import { eq, and, gte, lte } from 'drizzle-orm';
+import { getDateRange } from '../db/helpers';
 
 const mealsQuerySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format'),
@@ -22,7 +23,7 @@ export async function mealsRoutes(fastify: FastifyInstance): Promise<void> {
       if (!parseResult.success) {
         return reply.status(400).send({
           error: 'Validation Error',
-          message: parseResult.error.issues[0].message,
+          message: parseResult.error.issues[0]?.message ?? 'Invalid query parameters',
         });
       }
 
@@ -39,11 +40,8 @@ export async function mealsRoutes(fastify: FastifyInstance): Promise<void> {
         const userProfile = profile[0];
         const timezone = userProfile?.timezone ?? 'UTC';
 
-        // Calculate start and end of the requested day in the user's timezone
-        const startOfDay = new Date(`${date}T00:00:00`);
-        const endOfDay = new Date(`${date}T23:59:59.999`);
+        const { start: startOfDay, end: endOfDay } = getDateRange(date, timezone);
 
-        // Fetch meals for the day
         const dayMeals = await db
           .select()
           .from(meals)

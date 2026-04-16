@@ -1,4 +1,5 @@
 import { eq, and, gte, lte, ilike, desc } from 'drizzle-orm';
+import { formatInTimeZone } from 'date-fns-tz';
 import { db, meals, userProfiles, getDateRange, getTodayRange } from '../../db';
 import type { ToolHandler, SearchMealsArgs, SearchMealsResult } from '../types';
 
@@ -55,7 +56,9 @@ export const searchMealsHandler: ToolHandler<SearchMealsArgs, SearchMealsResult>
 
   return {
     meals: results.map((m) => ({
-      date: m.loggedAt.toISOString().split('T')[0] as string,
+      id: m.id,
+      date: formatInTimeZone(m.loggedAt, timezone, 'yyyy-MM-dd'),
+      loggedAt: formatInTimeZone(m.loggedAt, timezone, "yyyy-MM-dd'T'HH:mm"),
       mealType: m.mealType,
       description: m.description,
       calories: m.calories,

@@ -35,6 +35,12 @@ export interface LogMealArgs {
   carbsG: number;
   fatG: number;
   notes?: string;
+  /**
+   * When the meal was eaten, in the user's local timezone.
+   * Accepts `YYYY-MM-DDTHH:mm` or `YYYY-MM-DDTHH:mm:ss` (no offset).
+   * Omit to stamp "now".
+   */
+  loggedAt?: string;
 }
 
 export interface LogMealResult {
@@ -54,6 +60,78 @@ export interface LogMealResult {
 export interface LogWeightArgs {
   weightLbs: number;
   notes?: string;
+  /**
+   * When the weigh-in happened, in the user's local timezone.
+   * Accepts `YYYY-MM-DDTHH:mm` or `YYYY-MM-DDTHH:mm:ss` (no offset).
+   * Omit to stamp "now".
+   */
+  loggedAt?: string;
+}
+
+export interface UpdateMealArgs {
+  mealId: string;
+  mealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  description?: string;
+  calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
+  notes?: string | null;
+  loggedAt?: string;
+}
+
+export interface UpdateMealResult {
+  success: boolean;
+  mealId: string;
+  message: string;
+  updated: {
+    mealType: string;
+    description: string;
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+    notes: string | null;
+    loggedAt: string;
+  };
+}
+
+export interface DeleteMealArgs {
+  mealId: string;
+}
+
+export interface DeleteMealResult {
+  success: boolean;
+  mealId: string;
+  message: string;
+}
+
+export interface UpdateWeightArgs {
+  weightLogId: string;
+  weightLbs?: number;
+  notes?: string | null;
+  loggedAt?: string;
+}
+
+export interface UpdateWeightResult {
+  success: boolean;
+  weightLogId: string;
+  message: string;
+  updated: {
+    weightLbs: number;
+    notes: string | null;
+    loggedAt: string;
+  };
+}
+
+export interface DeleteWeightArgs {
+  weightLogId: string;
+}
+
+export interface DeleteWeightResult {
+  success: boolean;
+  weightLogId: string;
+  message: string;
 }
 
 export interface LogWeightResult {
@@ -77,6 +155,8 @@ export interface GetTodaySummaryResult {
   totalFatG: number;
   mealCount: number;
   meals: Array<{
+    id: string;
+    loggedAt: string;
     mealType: string;
     description: string;
     calories: number;
@@ -101,7 +181,9 @@ export interface GetWeightHistoryArgs {
 
 export interface GetWeightHistoryResult {
   entries: Array<{
+    id: string;
     date: string;
+    loggedAt: string;
     weightLbs: number;
     notes?: string;
   }>;
@@ -274,28 +356,15 @@ export interface SearchMealsArgs {
 
 export interface SearchMealsResult {
   meals: Array<{
+    id: string;
     date: string;
+    loggedAt: string;
     mealType: string;
     description: string;
     calories: number;
     proteinG: number;
     carbsG: number;
     fatG: number;
-  }>;
-  totalFound: number;
-}
-
-export interface SearchConversationsArgs {
-  query: string;
-  dateFrom?: string;
-  dateTo?: string;
-}
-
-export interface SearchConversationsResult {
-  messages: Array<{
-    date: string;
-    role: string;
-    content: string;
   }>;
   totalFound: number;
 }

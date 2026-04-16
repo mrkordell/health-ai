@@ -1,12 +1,14 @@
-import { db, meals } from '../../db';
+import { eq } from 'drizzle-orm';
+import { fromZonedTime } from 'date-fns-tz';
+import { db, meals, userProfiles } from '../../db';
 import type { ToolHandler, LogMealArgs, LogMealResult } from '../types';
 
 const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+const LOCAL_DATETIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?$/;
 
 export const logMealHandler: ToolHandler<LogMealArgs, LogMealResult> = async (args, userId) => {
-  const { mealType, description, calories, proteinG, carbsG, fatG, notes } = args;
+  const { mealType, description, calories, proteinG, carbsG, fatG, notes, loggedAt } = args;
 
-  // Validate required fields
   if (!mealType || !VALID_MEAL_TYPES.includes(mealType)) {
     throw new Error(`Invalid meal type. Must be one of: ${VALID_MEAL_TYPES.join(', ')}`);
   }
@@ -31,7 +33,9 @@ export const logMealHandler: ToolHandler<LogMealArgs, LogMealResult> = async (ar
     throw new Error('Invalid fatG: must be a non-negative number');
   }
 
-  console.log(`[log_meal] Logging ${mealType}: "${description}" (${calories} cal) for user ${userId}`);
+  const loggedAtInstant = await resolveLoggedAt(userId, loggedAt);
+
+  console.log(`[log_meal] Logging ${mealType}: "${description}" (${calories} cal) for user ${userId} at ${loggedAtInstant?.toISOString() ?? 'NOW()'}`);
 
   const [inserted] = await db
     .insert(meals)
@@ -45,8 +49,13 @@ export const logMealHandler: ToolHandler<LogMealArgs, LogMealResult> = async (ar
       fatG: String(Math.round(fatG * 10) / 10),
       notes: notes ?? null,
       dataSource: 'ai_estimate',
+      ...(loggedAtInstant ? { loggedAt: loggedAtInstant } : {}),
     })
     .returning();
+
+  if (!inserted) {
+    throw new Error('Failed to insert meal');
+  }
 
   return {
     success: true,
@@ -62,3 +71,33 @@ export const logMealHandler: ToolHandler<LogMealArgs, LogMealResult> = async (ar
     },
   };
 };
+
+/**
+ * Convert an optional local-time `loggedAt` string from the LLM into a UTC
+ * instant using the user's stored timezone. Returns null when absent so the
+ * DB default (NOW()) applies.
+ */
+async function resolveLoggedAt(userId: string, loggedAt: string | undefined): Promise<Date | null> {
+  if (!loggedAt) return null;
+
+  if (!LOCAL_DATETIME_RE.test(loggedAt)) {
+    throw new Error(
+      `Invalid loggedAt: "${loggedAt}". Expected YYYY-MM-DDTHH:mm in the user's local timezone.`
+    );
+  }
+
+  const [profile] = await db
+    .select({ timezone: userProfiles.timezone })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
+
+  const timezone = profile?.timezone ?? 'UTC';
+  const instant = fromZonedTime(loggedAt, timezone);
+
+  if (Number.isNaN(instant.getTime())) {
+    throw new Error(`Invalid loggedAt: "${loggedAt}" could not be parsed in timezone ${timezone}.`);
+  }
+
+  return instant;
+}

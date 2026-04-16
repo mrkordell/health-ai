@@ -28,7 +28,7 @@ export const estimateNutrition: ToolDefinition = {
 export const logMeal: ToolDefinition = {
   name: 'log_meal',
   description:
-    'Log a meal to the user database. Call this after estimating nutrition or when the user provides their own values.',
+    'Log a meal to the user database. Call this after estimating nutrition or when the user provides their own values. Pass `loggedAt` when the user is describing a meal from earlier (e.g. "I had eggs for breakfast this morning" at 9pm) — otherwise the meal will be stamped at the current moment and may land on the wrong calendar day.',
   parameters: {
     type: 'object',
     properties: {
@@ -61,6 +61,11 @@ export const logMeal: ToolDefinition = {
         type: 'string',
         description: 'Optional notes about the meal',
       },
+      loggedAt: {
+        type: 'string',
+        description:
+          "When the meal was eaten, in the user's local timezone. Format: YYYY-MM-DDTHH:mm (24h), e.g. '2026-04-15T08:30'. Use when backfilling earlier meals; omit to stamp the current moment.",
+      },
     },
     required: ['mealType', 'description', 'calories', 'proteinG', 'carbsG', 'fatG'],
   },
@@ -69,7 +74,7 @@ export const logMeal: ToolDefinition = {
 export const logWeight: ToolDefinition = {
   name: 'log_weight',
   description:
-    "Log the user's weight in pounds. Use this when the user reports their current weight.",
+    "Log the user's weight in pounds. Use this when the user reports their current weight. Pass `loggedAt` when they're reporting a weigh-in from earlier.",
   parameters: {
     type: 'object',
     properties: {
@@ -81,8 +86,89 @@ export const logWeight: ToolDefinition = {
         type: 'string',
         description: 'Optional notes about the weigh-in',
       },
+      loggedAt: {
+        type: 'string',
+        description:
+          "When the weigh-in happened, in the user's local timezone. Format: YYYY-MM-DDTHH:mm (24h). Omit to stamp now.",
+      },
     },
     required: ['weightLbs'],
+  },
+};
+
+export const updateMeal: ToolDefinition = {
+  name: 'update_meal',
+  description:
+    "Update fields on a previously-logged meal. Pass `mealId` (from search_meals or get_today_summary) plus only the fields you want to change. Before calling, show the user exactly what you're changing and get confirmation — this is a destructive edit.",
+  parameters: {
+    type: 'object',
+    properties: {
+      mealId: {
+        type: 'string',
+        description: 'The meal id from search_meals or get_today_summary.',
+      },
+      mealType: {
+        type: 'string',
+        enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+      },
+      description: { type: 'string' },
+      calories: { type: 'number' },
+      proteinG: { type: 'number' },
+      carbsG: { type: 'number' },
+      fatG: { type: 'number' },
+      notes: { type: 'string' },
+      loggedAt: {
+        type: 'string',
+        description:
+          "New local datetime for the meal. Format: YYYY-MM-DDTHH:mm. Use to move a meal to a different day or time.",
+      },
+    },
+    required: ['mealId'],
+  },
+};
+
+export const deleteMeal: ToolDefinition = {
+  name: 'delete_meal',
+  description:
+    "Permanently delete a logged meal. Pass `mealId` (from search_meals or get_today_summary). Always confirm with the user before calling — this cannot be undone.",
+  parameters: {
+    type: 'object',
+    properties: {
+      mealId: { type: 'string' },
+    },
+    required: ['mealId'],
+  },
+};
+
+export const updateWeight: ToolDefinition = {
+  name: 'update_weight',
+  description:
+    "Update fields on a previously-logged weigh-in. Pass `weightLogId` (from get_weight_history) plus only the fields to change. Confirm the change with the user before calling.",
+  parameters: {
+    type: 'object',
+    properties: {
+      weightLogId: { type: 'string' },
+      weightLbs: { type: 'number' },
+      notes: { type: 'string' },
+      loggedAt: {
+        type: 'string',
+        description: "New local datetime for the weigh-in. Format: YYYY-MM-DDTHH:mm.",
+      },
+    },
+    required: ['weightLogId'],
+  },
+};
+
+export const deleteWeight: ToolDefinition = {
+  name: 'delete_weight',
+  description:
+    "Permanently delete a logged weigh-in. Pass `weightLogId` (from get_weight_history). Always confirm with the user first.",
+  parameters: {
+    type: 'object',
+    properties: {
+      weightLogId: { type: 'string' },
+    },
+    required: ['weightLogId'],
   },
 };
 
@@ -409,7 +495,11 @@ export const searchConversations: ToolDefinition = {
 export const regularTools: ToolDefinition[] = [
   estimateNutrition,
   logMeal,
+  updateMeal,
+  deleteMeal,
   logWeight,
+  updateWeight,
+  deleteWeight,
   getTodaySummary,
   getWeightHistory,
   updateGoals,
@@ -434,7 +524,11 @@ export const allTools: ToolDefinition[] = [
 export type ToolName =
   | 'estimate_nutrition'
   | 'log_meal'
+  | 'update_meal'
+  | 'delete_meal'
   | 'log_weight'
+  | 'update_weight'
+  | 'delete_weight'
   | 'get_today_summary'
   | 'get_weight_history'
   | 'update_goals'

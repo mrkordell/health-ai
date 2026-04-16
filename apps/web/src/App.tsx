@@ -10,8 +10,10 @@ import { ChatContainer } from './components/Chat';
 import { MealsScreen } from './components/Meals';
 import { WeightScreen } from './components/Weight';
 import { Wordmark } from './components/Brand/Wordmark';
+import { useSyncTimezone } from './hooks/useSyncTimezone';
 
 function AuthenticatedContent() {
+  useSyncTimezone();
   return (
     <BrowserRouter>
       <AppShell>

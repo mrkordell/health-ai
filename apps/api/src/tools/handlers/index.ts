@@ -1,6 +1,10 @@
 export { lookupNutritionHandler } from './lookup-nutrition';
 export { logMealHandler } from './log-meal';
+export { updateMealHandler } from './update-meal';
+export { deleteMealHandler } from './delete-meal';
 export { logWeightHandler } from './log-weight';
+export { updateWeightHandler } from './update-weight';
+export { deleteWeightHandler } from './delete-weight';
 export { getTodaySummaryHandler } from './get-today-summary';
 export { getWeightHistoryHandler } from './get-weight-history';
 export { updateGoalsHandler } from './update-goals';
